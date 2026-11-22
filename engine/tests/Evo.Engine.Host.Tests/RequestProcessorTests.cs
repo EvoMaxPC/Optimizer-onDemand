@@ -81,7 +81,12 @@ public sealed class RequestProcessorTests
         string repoRoot = RepoRoot.Find();
         string schemaPath = Path.Combine(repoRoot, "schemas", "ipc-host.schema.json");
         using var schemaDoc = JsonDocument.Parse(File.ReadAllText(schemaPath, Encoding.UTF8));
-        var defs = schemaDoc.RootElement.GetProperty("$defs");
+
+        if (!schemaDoc.RootElement.TryGetProperty("$defs", out var defs))
+        {
+            Assert.Fail("Missing schema path: $defs");
+            return;
+        }
 
         var pairs = new (string Req, string DefName)[]
         {
@@ -92,16 +97,46 @@ public sealed class RequestProcessorTests
 
         foreach (var (req, defName) in pairs)
         {
+            if (!defs.TryGetProperty(defName, out var defNode))
+            {
+                Assert.Fail($"Missing schema path: $defs.{defName}");
+                return;
+            }
+            if (!defNode.TryGetProperty("properties", out var defProps))
+            {
+                Assert.Fail($"Missing schema path: $defs.{defName}.properties");
+                return;
+            }
+            if (!defProps.TryGetProperty("result", out var resultSchema))
+            {
+                Assert.Fail($"Missing schema path: $defs.{defName}.properties.result");
+                return;
+            }
+            if (!resultSchema.TryGetProperty("required", out var required) || required.ValueKind != JsonValueKind.Array)
+            {
+                Assert.Fail($"Missing schema path: $defs.{defName}.properties.result.required");
+                return;
+            }
+
+            var expectedKeys = required.EnumerateArray()
+                .Select(e => e.GetString())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Select(s => s!)
+                .ToHashSet(StringComparer.Ordinal);
+            Assert.NotEmpty(expectedKeys);
+
             string? res = _processor.Process(req);
             Assert.NotNull(res);
             using var resDoc = JsonDocument.Parse(res!);
-            var result = resDoc.RootElement.GetProperty("result");
-            var required = defs.GetProperty(defName).GetProperty("result").GetProperty("required");
-            foreach (var r in required.EnumerateArray())
+            if (!resDoc.RootElement.TryGetProperty("result", out var result) || result.ValueKind != JsonValueKind.Object)
             {
-                string key = r.GetString()!;
-                Assert.True(result.TryGetProperty(key, out _), $"Missing required field {key} in {defName}");
+                Assert.Fail($"Response for {defName} did not contain a 'result' object.");
+                return;
             }
+
+            var actualKeys = result.EnumerateObject().Select(p => p.Name).ToHashSet(StringComparer.Ordinal);
+            Assert.True(expectedKeys.SetEquals(actualKeys),
+                $"Result keys mismatch for {defName}. Expected: [{string.Join(", ", expectedKeys)}], Actual: [{string.Join(", ", actualKeys)}]");
         }
     }
 
