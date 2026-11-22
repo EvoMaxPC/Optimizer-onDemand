@@ -1,4 +1,5 @@
 using System.Windows;
+using EVO.Desktop.ViewModels;
 
 namespace EVO.Desktop;
 
@@ -9,6 +10,7 @@ public partial class App : Application
 {
     public App()
     {
-        // StartupUri = "MainWindow.xaml" (ver App.xaml)
+        var viewModel = new MainViewModel();
+        MainWindow = new MainWindow(viewModel);
     }
 }
