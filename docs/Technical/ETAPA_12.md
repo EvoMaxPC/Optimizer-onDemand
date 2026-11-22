@@ -1,6 +1,6 @@
 # ETAPA 12 — M15 REPORTS + M16 LIVE (V1.0)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44990354058, CI_RUNNER).
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -41,9 +41,9 @@ diagnóstico: los verdicts siguen siendo de M14.
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E12-01 | `EVO.Core.Reports.ReportBuilder` + `EVO.Core.Live.LiveMonitorCollector` creados y compilan | ⏳ |
-| E12-02 | Tests xUnit de M15/M16 (sin CIM) — pasan en CI | ⏳ |
-| E12-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E12-01 | `EVO.Core.Reports.ReportBuilder` + `EVO.Core.Live.LiveMonitorCollector` creados y compilan | ✅ CI_RUNNER (run 44990354058) |
+| E12-02 | Tests xUnit de M15/M16 (sin CIM) — pasan en CI | ✅ CI_RUNNER (run 44990354058) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox). Nota: la primera iteración falló en test por namingPolicy (PascalCase vs camelCase); la corrección usa JsonNamingPolicy.CamelCase |
+| E12-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44990354058) |
 
 ## 5. Decisiones de diseño concretas
 
@@ -56,4 +56,14 @@ diagnóstico: los verdicts siguen siendo de M14.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44990354058, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (5 Facts de M15 + 9 Facts de M16 + los existentes).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M15/M16).
+
+**Pendiente:** E12-04 — PC del usuario (verificar M15/M16 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
