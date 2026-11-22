@@ -61,7 +61,8 @@ const ALLOWED_STAGE2_FILES = new Set([
   'docs/architecture/RUNTIME_REQUIREMENTS.md',
   'docs/adr/0018-tauri-surface-and-frontend-dependency-policy.md',
   'docs/adr/0019-modules-manifest.md',
-  'schemas/modules-manifest.schema.json'
+  'schemas/modules-manifest.schema.json',
+  '.gitattributes'
 ]);
 
 const ALLOWED_ROOT_PKG_KEYS = new Set([
