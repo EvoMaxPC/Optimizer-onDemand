@@ -36,7 +36,7 @@
 | .NET SDK .NET 10 (`dotnet --list-sdks`) | ⛔ Pendiente — verificado indirectamente por el CI (enlace al run) |
 
 **Estado consolidado F01: VERIFICADO EN CI** — estructura, decisiones y config verificados por CI.
-**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446
 **Pendiente de PC del usuario:** validación de infraestructura PowerShell (script Windows).
 
 ## Checkpoint F02 — Solución y proyectos creados
@@ -50,7 +50,7 @@
 | Proyectos diferidos (`EVO.Collectors`, `EVO.Data`, `EVO.Reports`, `EVO.PowerShell`) | ⏭ diferidos (D-012) |
 
 **Estado consolidado F02: VERIFICADO EN CI** — restore y build (Release) OK.
-**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446
 
 ## Checkpoint F03 — Referencias y dependencias correctas
 
@@ -62,7 +62,7 @@
 | Sin ciclos de referencia | VERIFICADO ESTÁTICAMENTE |
 
 **Estado consolidado F03: VERIFICADO EN CI** — referencias correctas (build Release OK).
-**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446
 
 ## Checkpoint F04 — Contratos y modelos implementados
 
@@ -77,7 +77,7 @@
 | `src/EVO.Core/Findings/Severity.cs` | 5 niveles | GENERADO |
 
 **Estado consolidado F04: VERIFICADO EN CI** — contratos/modelos compilan y sus tests pasan en CI.
-**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446
 
 ## Checkpoint F05 — Configuración y logging funcionales
 
@@ -90,7 +90,7 @@
 | `src/EVO.Desktop/EVO.Desktop.csproj` | Copia `config/appsettings.json` al output (publish portable) | GENERADO |
 
 **Estado consolidado F05: VERIFICADO EN CI** — AppSettings carga/valida y SimpleFileLogger loggea (tests xUnit verdes en CI).
-**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446
 
 ## Checkpoint F06 — Pruebas aprobadas y compilación exitosa
 
@@ -102,7 +102,7 @@
 | Artefactos .trx subidos por CI | ⛔ Pendiente de CI |
 
 **Estado consolidado F06: VERIFICADO EN CI** — build Release, 12 tests xUnit (trx) y verificación PowerShell 5.1 pasan en CI.
-**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446
 **CI_RUNNER, no PC del usuario** — PC del usuario pendiente (F06 en su entorno).
 
 ## Criterios de cierre
@@ -111,4 +111,4 @@
 - **F01–F05:** VERIFICADO EN CI (enlace al run); VERIFICADO EN PC DEL USUARIO pendiente.
 - **F06:** VERIFICADO EN CI; VERIFICADO EN PC DEL USUARIO pendiente.
 
-**ETAPA 01 FOUNDATION — F01–F06 VERIFICADOS EN CI (Run: https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079). PC DEL USUARIO pendiente.**
+**ETAPA 01 FOUNDATION — F01–F06 VERIFICADOS EN CI (Run: https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446). PC DEL USUARIO pendiente.**
