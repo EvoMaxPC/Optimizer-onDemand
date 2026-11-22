@@ -101,6 +101,7 @@ Check-Path "src\EVO.Core\Findings\Severity.cs" "Severity.cs"
 Check-Path "src\EVO.Core\Contracts\Metric.cs" "Metric.cs (string+numeric)"
 Check-Path "src\EVO.Collectors\Hardware\SystemIntelligenceCollector.cs" "SystemIntelligenceCollector.cs"
 Check-Path "src\EVO.Collectors\CPU\CpuAnalyzerCollector.cs" "CpuAnalyzerCollector.cs (M02)"
+Check-Path "src\EVO.Collectors\Memory\RamAnalyzerCollector.cs" "RamAnalyzerCollector.cs (M03)"
 
 Write-Host ""
 Write-Host "[F05] Configuracion y logging" -ForegroundColor Cyan
