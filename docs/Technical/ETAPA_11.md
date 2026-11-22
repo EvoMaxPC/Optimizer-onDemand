@@ -1,6 +1,6 @@
 # ETAPA 11 — M14 BOTTLENECK ENGINE (Correlación de evidencias)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44989438084, CI_RUNNER).
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -62,9 +62,9 @@ ICollector
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E11-01 | `EVO.Core.Correlation.BottleneckEngineCollector` (M14) creado y compila | ⏳ |
-| E11-02 | Tests xUnit de correlación (sin CIM — stub collectors) — pasan en CI | ⏳ |
-| E11-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E11-01 | `EVO.Core.Correlation.BottleneckEngineCollector` (M14) creado y compila | ✅ CI_RUNNER (run 44989438084) |
+| E11-02 | Tests xUnit de correlación (sin CIM — stub collectors) — pasan en CI | ✅ CI_RUNNER (run 44989438084) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox). Nota: la primera iteración falló en build por `_sources.Count` en `IEnumerable`; la corrección usa `List<ICollector>` |
+| E11-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44989438084) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -76,4 +76,14 @@ ICollector
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44989438084, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (12 Facts de correlación + los existentes).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M14).
+
+**Pendiente:** E11-04 — PC del usuario (verificar M14 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
