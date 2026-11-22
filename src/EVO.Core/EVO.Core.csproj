@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>EVO.Core</RootNamespace>
+    <AssemblyName>EVO.Core</AssemblyName>
+    <Version>0.1.0</Version>
+    <Company>EVO LABS</Company>
+    <Product>EVO BOTTLENECK DETECTOR</Product>
+    <Description>Contratos, modelos y servicios núcleo de EVO BOTTLENECK DETECTOR.</Description>
+    <PackageTags>EVO;Windows;Diagnostics</PackageTags>
+  </PropertyGroup>
+
+</Project>
