@@ -113,3 +113,27 @@ jobs:
       # TODO: activar cargo clippy --all-targets --locked -- -D warnings y --locked cuando exista Cargo.lock commiteado
       - name: Check Tauri crate with cargo check
         run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
+
+  engine:
+    name: Validar host .NET de solo lectura (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore .NET dependencies
+        run: dotnet restore engine/Evo.Engine.sln
+
+      - name: Build .NET host and tests
+        run: dotnet build engine/Evo.Engine.sln -c Release -warnaserror
+
+      - name: Test .NET host
+        run: dotnet test engine/Evo.Engine.sln -c Release --no-build
