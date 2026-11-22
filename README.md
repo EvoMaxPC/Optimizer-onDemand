@@ -32,20 +32,16 @@ servidores externos; diagnóstico **solo lectura** por defecto.
 
 ## Estado del proyecto
 
-**ETAPA 01 — FOUNDATION (F01–F06 VERIFICADOS EN CI; pendiente de verificación en PC del usuario)**
+**V1.0 — CERRADA (CI_RUNNER); verificación en PC del usuario pendiente**
 
-| Checkpoint | Estado |
-|------------|--------|
-| F01 Entorno y estructura verificados | ✅ VERIFICADO EN CI ([run](https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446)) |
-| F02 Solución y proyectos creados | ✅ VERIFICADO EN CI |
-| F03 Referencias y dependencias correctas | ✅ VERIFICADO EN CI |
-| F04 Contratos y modelos implementados | ✅ VERIFICADO EN CI |
-| F05 Configuración y logging funcionales | ✅ VERIFICADO EN CI |
-| F06 Pruebas aprobadas y compilación exitosa | ✅ VERIFICADO EN CI (build Release, 12 tests xUnit, verificación PowerShell 5.1) |
+| Milestone | Módulos | Estado |
+|-----------|---------|--------|
+| V1.0 | M01, M02, M03, M04, M06, M07, M08, M09, M12, M14, M15, M16 | ✅ CI_RUNNER |
+| V1.0 | M10 — Latency Lab (DPC/ISR/ETW) | ⏳ Diferido explícitamente |
 
-**CI_RUNNER, no PC del usuario.** La verificación en PC del usuario sigue pendiente. Ver [`docs/Technical/FOUNDATION.md`](docs/Technical/FOUNDATION.md).
+**CI_RUNNER, no PC del usuario.** La verificación en PC del usuario sigue pendiente. Ver [`docs/Technical/V1_0_STATUS.md`](docs/Technical/V1_0_STATUS.md).
 
-Ver estado detallado en [`docs/Technical/FOUNDATION.md`](docs/Technical/FOUNDATION.md).
+Guía de verificación en PC: [`docs/Technical/PC_VERIFICATION.md`](docs/Technical/PC_VERIFICATION.md).
 
 ## ETAPA 02 — M01 System Intelligence
 
