@@ -1,7 +1,6 @@
 <Application x:Class="EVO.Desktop.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:converters="clr-namespace:EVO.Desktop.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="EVOBlack" Color="#0A0A0A"/>
@@ -12,6 +11,5 @@
         <SolidColorBrush x:Key="EVOWhite" Color="#F5F5F5"/>
         <SolidColorBrush x:Key="EVOGray" Color="#9E9E9E"/>
         <SolidColorBrush x:Key="EVOGrayLight" Color="#5A5A5A"/>
-        <converters:InvertedBoolConverter x:Key="InvertedBool"/>
     </Application.Resources>
 </Application>

@@ -7,6 +7,8 @@ namespace EVO.Desktop;
 /// </summary>
 public partial class App : Application
 {
-    // StartupUri = "MainWindow.xaml" (ver App.xaml). WPF crea la ventana;
-    // el ViewModel se construye dentro de MainWindow.
+    public App()
+    {
+        // StartupUri = "MainWindow.xaml" (ver App.xaml)
+    }
 }
