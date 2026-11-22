@@ -39,7 +39,7 @@ public class FileLoggerTests : IDisposable
         Assert.Equal(2, lines.Length);
         Assert.Contains("Z [Info] foundation start", lines[0]);
         Assert.Contains("Z [Warning] check pending", lines[1]);
-        Assert.Matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", lines[0]);
+        Assert.Matches(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", lines[0]);
     }
 
     [Fact]
