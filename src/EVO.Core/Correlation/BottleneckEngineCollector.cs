@@ -41,7 +41,7 @@ public sealed class BottleneckEngineCollector : ICollector
     /// <summary>Umbral de corroboración de HEALTH (errores de sistema en 24 h, M12).</summary>
     public const double HealthCorroboratedSystemErrors = 10.0;
 
-    private readonly IEnumerable<ICollector> _sources;
+    private readonly List<ICollector> _sources;
 
     /// <summary>
     /// Crea el motor con los módulos fuente cuyas métricas se correlacionan.
