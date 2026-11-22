@@ -42,3 +42,11 @@
 ## Estado del módulo
 
 🟡 En progreso. Pendiente: CI verde.
+
+## Estado del dashboard WPF (EVO.Desktop)
+
+> 2026-11-22 — El shell WPF se simplificó (sin Commands/Converters custom;
+> patrón StartupUri + parameterless ctor + DataContext en code-behind).
+> HEAD: 6636a4d. **CI NO CONFIRMADO**: el run solo existe para 99c5c56
+> (éxito); este push no dispara checks en PR #1 (plataforma/Actions pendiente).
+> No reclamamos el dashboard como verificado.
