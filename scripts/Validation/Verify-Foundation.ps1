@@ -103,6 +103,7 @@ Check-Path "src\EVO.Collectors\Hardware\SystemIntelligenceCollector.cs" "SystemI
 Check-Path "src\EVO.Collectors\CPU\CpuAnalyzerCollector.cs" "CpuAnalyzerCollector.cs (M02)"
 Check-Path "src\EVO.Collectors\Memory\RamAnalyzerCollector.cs" "RamAnalyzerCollector.cs (M03)"
 Check-Path "src\EVO.Collectors\Storage\StorageAnalyzerCollector.cs" "StorageAnalyzerCollector.cs (M04)"
+Check-Path "src\EVO.Collectors\Processes\ProcessAnalyzerCollector.cs" "ProcessAnalyzerCollector.cs (M06)"
 
 Write-Host ""
 Write-Host "[F05] Configuracion y logging" -ForegroundColor Cyan
