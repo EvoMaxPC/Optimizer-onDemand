@@ -61,6 +61,17 @@ public class CollectResultTests
     }
 
     [Fact]
+    public void Metric_WithStringValue_IsAllowed()
+    {
+        var metric = new Metric("os.caption", "", 0, DateTimeOffset.UtcNow, "Windows 11 Pro");
+
+        Assert.Equal("os.caption", metric.Name);
+        Assert.Equal("Windows 11 Pro", metric.StringValue);
+        Assert.Equal(0, metric.Value);
+        Assert.Equal("", metric.Unit);
+    }
+
+    [Fact]
     public void Anomaly_Create_SetsTimestampAndThreshold()
     {
         var detected = DateTimeOffset.UtcNow;
