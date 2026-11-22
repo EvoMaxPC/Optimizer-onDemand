@@ -122,6 +122,34 @@ public sealed class RequestProcessor
                 });
             }
 
+            if (method == "catalog.list")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { actions = ActionExecutor.LoadCatalog() });
+            }
+
+            if (method == "action.apply")
+            {
+                if (!hasParams || paramsEl.ValueKind != JsonValueKind.Object ||
+                    !paramsEl.TryGetProperty("actionId", out var actionIdEl) || actionIdEl.ValueKind != JsonValueKind.String)
+                {
+                    return hasId ? SerializeError(idValue, -32602, "Invalid params: actionId required") : null;
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, ActionExecutor.Apply(actionIdEl.GetString()!));
+            }
+
+            if (method == "action.rollback")
+            {
+                if (!hasParams || paramsEl.ValueKind != JsonValueKind.Object ||
+                    !paramsEl.TryGetProperty("actionId", out var actionIdEl) || actionIdEl.ValueKind != JsonValueKind.String)
+                {
+                    return hasId ? SerializeError(idValue, -32602, "Invalid params: actionId required") : null;
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, ActionExecutor.Rollback(actionIdEl.GetString()!));
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }
