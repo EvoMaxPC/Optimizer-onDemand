@@ -1,3 +1,4 @@
+using Xunit;
 using EVO.Core.Configuration;
 
 namespace EVO.Core.Tests.Configuration;

@@ -1,3 +1,4 @@
+using Xunit;
 using EVO.Core.Findings;
 
 namespace EVO.Core.Tests.Findings;

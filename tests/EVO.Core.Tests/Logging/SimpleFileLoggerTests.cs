@@ -1,3 +1,4 @@
+using Xunit;
 using EVO.Core.Logging;
 
 namespace EVO.Core.Tests.Logging;

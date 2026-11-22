@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="Xunit" />
     <ProjectReference Include="..\..\src\EVO.Core\EVO.Core.csproj" />
   </ItemGroup>
 

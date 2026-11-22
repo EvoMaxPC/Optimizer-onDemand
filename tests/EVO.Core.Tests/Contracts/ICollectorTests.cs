@@ -1,3 +1,4 @@
+using Xunit;
 using EVO.Core.Contracts;
 using EVO.Core.Findings;
 
