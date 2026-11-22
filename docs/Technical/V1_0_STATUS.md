@@ -16,10 +16,14 @@
 | M08 — Startup Analyzer | ✅ | run 44987684312 |
 | M09 — Driver Intelligence | ✅ | run 44988109674 |
 | M12 — Windows Health | ✅ | run 44988503754 |
+| M05 — GPU Analyzer | ✅ | run 44991419059 |
+| M11 — Network Analyzer | ✅ | run 44991419059 |
 | M14 — Bottleneck Engine | ✅ | run 44989438084 |
 | M15 — Reports | ✅ | run 44990354058 |
 | M16 — Live Monitor (acotado) | ✅ | run 44990354058 |
 | M10 — Latency Lab (DPC, ISR, ETW) | ⏳ **DIFERIDO** | — |
+| M13 — Background Activity | ⏳ **NO IMPLEMENTADO** | — |
+| EVO.Desktop (dashboard WPF) | ⏳ **NO VERIFICADO** | — |
 
 ## Flujo completo
 
@@ -40,6 +44,12 @@ M01 (inventario) → mensuración (M02/M03/M04) → auditorías (M06/M07/M08/M09
 - **PC del usuario:** verificación E02-04 → E12-04 — pendientes. Todo el CI es
   CI_RUNNER; nada se afirma como verificado en máquina real todavía.
 - M10 — diferido explícitamente (DPC/ISR/ETW: instrumentos especiales, sin evidencia).
+- M13 — NO implementado (background activity): el stack no lo cubre. No se
+  inventa; queda explícitamente ausente del cierre.
+- EVO.Desktop (dashboard WPF) — comiteado en el branch como work-in-progress,
+  **sin verificación de build** (el runner del PR no dispara checks desde la
+  reescritura de main: PR #1 está DIRTY/CONFLICTING). No se afirma como
+  verificado. El único run verde cubre el shell original (run 44991419059, head 99c5c56).
 - D-016 (`Metric.StringValue`) — propuesta, sin aprobación del usuario.
 - PR #1 — abierto, sin merge.
 

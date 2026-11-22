@@ -1,6 +1,6 @@
 # ETAPA 13 — M05 GPU + M11 NETWORK (V0.5 completado parcialmente)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 CERRADO — CI_RUNNER (ver §4).
 > Fecha: 2026-11-22.
 
 ## M05 — GPU Analyzer
@@ -27,9 +27,9 @@
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E13-01 | M05 y M11 creados y compilan | ⏳ |
-| E13-02 | Tests xUnit de M05/M11 — pasan en CI | ⏳ |
-| E13-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E13-01 | M05 y M11 creados y compilan | ✅ CI_RUNNER — run 44991419059 (head 99c5c56) |
+| E13-02 | Tests xUnit de M05/M11 — pasan en CI | ✅ CI_RUNNER — run 44991419059 (head 99c5c56) |
+| E13-03 | Docs commiteados; PR #1 continúa | ✅ (docs commiteados c9c47e1/7c55ea2; commits de dashboard arriba, ver §4) |
 
 ## Decisiones de diseño
 
@@ -41,12 +41,16 @@
 
 ## Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 CI verde para el código de M05/M11 (run 44991419059, head 99c5c56: build +
+test + Verify-Foundation verdes, c9c47e1 + 7c55ea2 commiteados).
 
 ## Estado del dashboard WPF (EVO.Desktop)
 
 > 2026-11-22 — El shell WPF se simplificó (sin Commands/Converters custom;
 > patrón StartupUri + parameterless ctor + DataContext en code-behind).
-> HEAD: 6636a4d. **CI NO CONFIRMADO**: el run solo existe para 99c5c56
-> (éxito); este push no dispara checks en PR #1 (plataforma/Actions pendiente).
-> No reclamamos el dashboard como verificado.
+> **El dashboard NO está CI-VERIFICADO**: el único run verde (44991419059)
+> cubre el shell original, no el dashboard. El dashboard compilado no fue
+> confirmado en CI (ambas versiones anteriores fallaron el build; la versión
+> simplificada no tiene run asociado — el runner del PR no dispara checks).
+> No reclamamos el dashboard como verificado; queda como work-in-progress
+> en el branch con honestidad explícita.
