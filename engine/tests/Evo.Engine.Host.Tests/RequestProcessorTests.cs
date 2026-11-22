@@ -78,7 +78,7 @@ public sealed class RequestProcessorTests
     [Fact]
     public void ResultFields_MatchIpcHostSchemaRequired()
     {
-        string repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        string repoRoot = RepoRoot.Find();
         string schemaPath = Path.Combine(repoRoot, "schemas", "ipc-host.schema.json");
         using var schemaDoc = JsonDocument.Parse(File.ReadAllText(schemaPath, Encoding.UTF8));
         var defs = schemaDoc.RootElement.GetProperty("$defs");
@@ -108,11 +108,17 @@ public sealed class RequestProcessorTests
     [Fact]
     public void HostSource_IsStrictlyReadOnly()
     {
-        string repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        string repoRoot = RepoRoot.Find();
         string hostDir = Path.Combine(repoRoot, "engine", "src", "Evo.Engine.Host");
         string[] forbidden = ["Microsoft.Win32", "System.ServiceProcess", "Process.Start", "File.Write", "File.Delete", "Registry", "DllImport"];
 
-        foreach (string csFile in Directory.GetFiles(hostDir, "*.cs", SearchOption.AllDirectories))
+        string[] csFiles = Directory.GetFiles(hostDir, "*.cs", SearchOption.AllDirectories);
+        Assert.NotEmpty(csFiles);
+        string[] fileNames = csFiles.Select(Path.GetFileName).Where(n => n is not null).Select(n => n!).ToArray();
+        Assert.Contains("Program.cs", fileNames);
+        Assert.Contains("RequestProcessor.cs", fileNames);
+
+        foreach (string csFile in csFiles)
         {
             string content = File.ReadAllText(csFile, Encoding.UTF8);
             foreach (string term in forbidden)
