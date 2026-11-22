@@ -1,6 +1,6 @@
 # ETAPA 08 — M08 STARTUP ANALYZER (Arranque de Windows)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44987684312, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -47,9 +47,9 @@ que M14 consume.
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E08-01 | `EVO.Collectors.Startup.StartupAnalyzerCollector` (M08) creado y compila | ⏳ |
-| E08-02 | Tests xUnit de M08 — pasan en CI (`windows-latest`, CIM real) | ⏳ |
-| E08-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E08-01 | `EVO.Collectors.Startup.StartupAnalyzerCollector` (M08) creado y compila | ✅ CI_RUNNER (run 44987684312) |
+| E08-02 | Tests xUnit de M08 (5 Facts) — pasan en CI (`windows-latest`, CIM real) | ✅ CI_RUNNER (run 44987684312) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox) |
+| E08-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44987684312) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -62,4 +62,14 @@ que M14 consume.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44987684312, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (5 Facts de M08 + los existentes de M01/M02/M03/M04/M06/M07).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M08).
+
+**Pendiente:** E08-04 — PC del usuario (verificar M08 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
