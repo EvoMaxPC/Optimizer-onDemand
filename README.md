@@ -32,16 +32,18 @@ servidores externos; diagnóstico **solo lectura** por defecto.
 
 ## Estado del proyecto
 
-**ETAPA 01 — FOUNDATION (en progreso)**
+**ETAPA 01 — FOUNDATION (F01–F06 VERIFICADOS EN CI; pendiente de verificación en PC del usuario)**
 
 | Checkpoint | Estado |
 |------------|--------|
-| F01 Entorno y estructura verificados | ✅ Verificado (ver [`docs/Technical/FOUNDATION.md`](docs/Technical/FOUNDATION.md)) |
-| F02 Solución y proyectos creados | ✅ Verificado (parcial, ver D-012: módulos con responsabilidad real) |
-| F03 Referencias y dependencias correctas | ✅ Verificado |
-| F04 Contratos y modelos implementados | ✅ Verificado |
-| F05 Configuración y logging funcionales | ✅ Verificado (archivos listos; ejecución pendiente de Windows) |
-| F06 Pruebas aprobadas y compilación exitosa | ⏳ Pendiente — requiere Windows + .NET 10 SDK |
+| F01 Entorno y estructura verificados | ✅ VERIFICADO EN CI ([run](https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981262446)) |
+| F02 Solución y proyectos creados | ✅ VERIFICADO EN CI |
+| F03 Referencias y dependencias correctas | ✅ VERIFICADO EN CI |
+| F04 Contratos y modelos implementados | ✅ VERIFICADO EN CI |
+| F05 Configuración y logging funcionales | ✅ VERIFICADO EN CI |
+| F06 Pruebas aprobadas y compilación exitosa | ✅ VERIFICADO EN CI (build Release, 12 tests xUnit, verificación PowerShell 5.1) |
+
+**CI_RUNNER, no PC del usuario.** La verificación en PC del usuario sigue pendiente. Ver [`docs/Technical/FOUNDATION.md`](docs/Technical/FOUNDATION.md).
 
 Ver estado detallado en [`docs/Technical/FOUNDATION.md`](docs/Technical/FOUNDATION.md).
 
