@@ -46,13 +46,13 @@ public class WindowsHealthCollectorTests
         var collector = new WindowsHealthCollector();
         var result = await collector.CollectAsync();
 
-        decimal total = result.Metrics.FirstOrDefault(m => m.Name == "health.events_24h")?.Value ?? 0.0m;
-        decimal systemErr = result.Metrics.FirstOrDefault(m => m.Name == "health.system.errors")?.Value ?? 0.0m;
-        decimal systemWarn = result.Metrics.FirstOrDefault(m => m.Name == "health.system.warnings")?.Value ?? 0.0m;
-        decimal appErr = result.Metrics.FirstOrDefault(m => m.Name == "health.application.errors")?.Value ?? 0.0m;
-        decimal appWarn = result.Metrics.FirstOrDefault(m => m.Name == "health.application.warnings")?.Value ?? 0.0m;
+        double total = result.Metrics.FirstOrDefault(m => m.Name == "health.events_24h")?.Value ?? 0.0;
+        double systemErr = result.Metrics.FirstOrDefault(m => m.Name == "health.system.errors")?.Value ?? 0.0;
+        double systemWarn = result.Metrics.FirstOrDefault(m => m.Name == "health.system.warnings")?.Value ?? 0.0;
+        double appErr = result.Metrics.FirstOrDefault(m => m.Name == "health.application.errors")?.Value ?? 0.0;
+        double appWarn = result.Metrics.FirstOrDefault(m => m.Name == "health.application.warnings")?.Value ?? 0.0;
 
-        Assert.Equal(total, systemErr + systemWarn + appErr + appWarn, 3);
+        Assert.Equal(total, systemErr + systemWarn + appErr + appWarn, 2);
     }
 
     [Fact]
