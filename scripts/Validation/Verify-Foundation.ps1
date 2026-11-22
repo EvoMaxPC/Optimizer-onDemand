@@ -108,6 +108,7 @@ Check-Path "src\EVO.Collectors\Services\ServicesAuditorCollector.cs" "ServicesAu
 Check-Path "src\EVO.Collectors\Startup\StartupAnalyzerCollector.cs" "StartupAnalyzerCollector.cs (M08)"
 Check-Path "src\EVO.Collectors\Drivers\DriverAnalyzerCollector.cs" "DriverAnalyzerCollector.cs (M09)"
 Check-Path "src\EVO.Collectors\Windows\WindowsHealthCollector.cs" "WindowsHealthCollector.cs (M12)"
+Check-Path "src\EVO.Core\Correlation\BottleneckEngineCollector.cs" "BottleneckEngineCollector.cs (M14)"
 
 Write-Host ""
 Write-Host "[F05] Configuracion y logging" -ForegroundColor Cyan
