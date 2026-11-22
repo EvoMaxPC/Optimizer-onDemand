@@ -35,8 +35,9 @@
 | PowerShell / Windows (`Get-CimInstance`) | ⛔ Pendiente — requiere PC Windows |
 | .NET SDK .NET 10 (`dotnet --list-sdks`) | ⛔ Pendiente — verificado indirectamente por el CI (enlace al run) |
 
-**Estado consolidado F01: VERIFICADO ESTÁTICAMENTE** (pendiente de PC del usuario).
-**VERIFICADO EN CI: enlace al run →** ⏳ pendiente
+**Estado consolidado F01: VERIFICADO EN CI** — estructura, decisiones y config verificados por CI.
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**Pendiente de PC del usuario:** validación de infraestructura PowerShell (script Windows).
 
 ## Checkpoint F02 — Solución y proyectos creados
 
@@ -48,8 +49,8 @@
 | Archivos sin placeholders/archivos ficticios | VERIFICADO ESTÁTICAMENTE |
 | Proyectos diferidos (`EVO.Collectors`, `EVO.Data`, `EVO.Reports`, `EVO.PowerShell`) | ⏭ diferidos (D-012) |
 
-**Estado consolidado F02: VERIFICADO ESTÁTICAMENTE** (compilación pendiente de CI).
-**VERIFICADO EN CI: enlace al run →** ⏳ pendiente
+**Estado consolidado F02: VERIFICADO EN CI** — restore y build (Release) OK.
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
 
 ## Checkpoint F03 — Referencias y dependencias correctas
 
@@ -60,8 +61,8 @@
 | `EVO.Core` sin dependencias externas | VERIFICADO ESTÁTICAMENTE |
 | Sin ciclos de referencia | VERIFICADO ESTÁTICAMENTE |
 
-**Estado consolidado F03: VERIFICADO ESTÁTICAMENTE** (compilación pendiente de CI).
-**VERIFICADO EN CI: enlace al run →** ⏳ pendiente
+**Estado consolidado F03: VERIFICADO EN CI** — referencias correctas (build Release OK).
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
 
 ## Checkpoint F04 — Contratos y modelos implementados
 
@@ -75,8 +76,8 @@
 | `src/EVO.Core/Findings/FindingConfidence.cs` | 5 estados | GENERADO |
 | `src/EVO.Core/Findings/Severity.cs` | 5 niveles | GENERADO |
 
-**Estado consolidado F04: VERIFICADO ESTÁTICAMENTE** (compilación pendiente de CI).
-**VERIFICADO EN CI: enlace al run →** ⏳ pendiente
+**Estado consolidado F04: VERIFICADO EN CI** — contratos/modelos compilan y sus tests pasan en CI.
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
 
 ## Checkpoint F05 — Configuración y logging funcionales
 
@@ -88,8 +89,8 @@
 | `src/EVO.Core/Logging/LogLevel.cs` | enum niveles | GENERADO |
 | `src/EVO.Desktop/EVO.Desktop.csproj` | Copia `config/appsettings.json` al output (publish portable) | GENERADO |
 
-**Estado consolidado F05: VERIFICADO ESTÁTICAMENTE** (ejecución real pendiente de CI / PC del usuario).
-**VERIFICADO EN CI: enlace al run →** ⏳ pendiente
+**Estado consolidado F05: VERIFICADO EN CI** — AppSettings carga/valida y SimpleFileLogger loggea (tests xUnit verdes en CI).
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
 
 ## Checkpoint F06 — Pruebas aprobadas y compilación exitosa
 
@@ -100,12 +101,14 @@
 | `dotnet test` (trx) | ⛔ Pendiente de CI |
 | Artefactos .trx subidos por CI | ⛔ Pendiente de CI |
 
-**Estado consolidado F06: GENERADO — PENDIENTE DE CI Y DE PC DEL USUARIO.**
-**No se considera "verificado" hasta que el CI muestre tests verdes con enlace al run.**
+**Estado consolidado F06: VERIFICADO EN CI** — build Release, 12 tests xUnit (trx) y verificación PowerShell 5.1 pasan en CI.
+**VERIFICADO EN CI:** https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079
+**CI_RUNNER, no PC del usuario** — PC del usuario pendiente (F06 en su entorno).
 
 ## Criterios de cierre
 
 - **F06 aprobado:** ✅ CI verde (build + test) con enlace al run · ⏳ PC del usuario pendiente.
-- **F01–F05:** VERIFICADO ESTÁTICAMENTE hoy; VERIFICADO EN CI (enlace al run) pendiente; VERIFICADO EN PC DEL USUARIO pendiente.
+- **F01–F05:** VERIFICADO EN CI (enlace al run); VERIFICADO EN PC DEL USUARIO pendiente.
+- **F06:** VERIFICADO EN CI; VERIFICADO EN PC DEL USUARIO pendiente.
 
-**ETAPA 01 FOUNDATION — GENERADO · CI pendiente · PC del usuario pendiente.**
+**ETAPA 01 FOUNDATION — F01–F06 VERIFICADOS EN CI (Run: https://github.com/EvoMaxPC/Optimizer-onDemand/actions/runs/44981033079). PC DEL USUARIO pendiente.**
