@@ -80,3 +80,14 @@ Ejecutado `pnpm --filter @evo/desktop licenses list` sobre el árbol completo in
 | `MPL-2.0` | 2 paquetes (solo desarrollo: `lightningcss`, `lightningcss-linux-x64-gnu`) | Compatible con `GPL-3.0-or-later` (Sección 3.3 de MPL 2.0 permite combinación con GPLv3). |
 
 **Conclusión de la auditoría:** No existe ninguna dependencia directa ni transitiva con licencia propietaria, `GPL-2.0-only`, `SSPL` ni cláusulas incompatibles con `GPL-3.0-or-later`.
+
+---
+
+## 5. Dependencias de tests .NET (`engine/tests/Evo.Engine.Host.Tests/Evo.Engine.Host.Tests.csproj`)
+
+| Paquete | Versión fijada | Licencia | Propósito |
+|---|---|---|---|
+| `Microsoft.NET.Test.Sdk` | `17.14.2` | `NO VERIFICADO` | Infraestructura de ejecución de tests .NET (`dotnet test`). |
+| `xunit` | `2.9.3` | `NO VERIFICADO` | Framework de pruebas unitarias para `Evo.Engine.Host`. |
+| `xunit.runner.visualstudio` | `2.8.2` | `NO VERIFICADO` | Adaptador de descubrimiento y ejecución de xUnit. |
+
