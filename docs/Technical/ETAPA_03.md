@@ -1,6 +1,6 @@
 # ETAPA 03 — M02 CPU ANALYZER (Saturación y limitaciones)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44983845008, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -54,9 +54,9 @@ elevado (regla de la especificación). Solo indica que hay que investigar.
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E03-01 | `EVO.Collectors.CPU.CpuAnalyzerCollector` (M02) creado y compila | ⏳ |
-| E03-02 | Tests xUnit de M02 — pasan en CI (`windows-latest`, CIM real) | ⏳ |
-| E03-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E03-01 | `EVO.Collectors.CPU.CpuAnalyzerCollector` (M02) creado y compila | ✅ CI_RUNNER (run 44983845008) |
+| E03-02 | Tests xUnit de M02 (5 Facts) — pasan en CI (`windows-latest`, CIM real) | ✅ CI_RUNNER (run 44983845008) — workflow verde; contadores exactos no citados (host de artifacts bloqueado en este sandbox) |
+| E03-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44983845008) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -71,4 +71,14 @@ elevado (regla de la especificación). Solo indica que hay que investigar.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44983845008, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (5 Facts de M02 + los existentes de M01).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M02).
+
+**Pendiente:** E03-04 — PC del usuario (verificar M02 en máquina real del dueño).
+Ese check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
