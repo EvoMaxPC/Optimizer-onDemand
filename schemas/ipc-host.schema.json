@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://evo-optimizer.local/schemas/ipc-host.schema.json",
+  "title": "EVO Engine Host Read-Only JSON-RPC 2.0 Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "framing", "methods", "errors"],
+  "properties": {
+    "protocol": {
+      "type": "string",
+      "const": "jsonrpc-2.0"
+    },
+    "framing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transport", "encoding", "maxLineBytes"],
+      "properties": {
+        "transport": { "type": "string", "const": "ndjson-stdio" },
+        "encoding": { "type": "string", "const": "utf-8-no-bom" },
+        "maxLineBytes": { "type": "integer", "const": 1048576 }
+      }
+    },
+    "methods": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/methodEngineHello" },
+          { "$ref": "#/$defs/methodEngineVersion" },
+          { "$ref": "#/$defs/methodSystemOsInfo" }
+        ]
+      }
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "name"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [-32700, -32600, -32601, -32602, -32001]
+          },
+          "name": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "methodEngineHello": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "params", "result"],
+      "properties": {
+        "name": { "type": "string", "const": "engine.hello" },
+        "params": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["clientName", "protocolVersion"],
+          "properties": {
+            "clientName": { "type": "string", "minLength": 1, "maxLength": 64 },
+            "protocolVersion": { "type": "integer" }
+          }
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["protocolVersion", "engineName", "readOnly", "methods"],
+          "properties": {
+            "protocolVersion": { "type": "integer", "const": 1 },
+            "engineName": { "type": "string", "const": "Evo.Engine.Host" },
+            "readOnly": { "type": "boolean", "const": true },
+            "methods": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "string",
+                "enum": ["engine.hello", "engine.version", "system.osInfo"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "methodEngineVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "params", "result"],
+      "properties": {
+        "name": { "type": "string", "const": "engine.version" },
+        "params": { "type": "null" },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["engineVersion", "runtime"],
+          "properties": {
+            "engineVersion": { "type": "string" },
+            "runtime": { "type": "string" }
+          }
+        }
+      }
+    },
+    "methodSystemOsInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "params", "result"],
+      "properties": {
+        "name": { "type": "string", "const": "system.osInfo" },
+        "params": { "type": "null" },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["platform", "osDescription", "osVersion", "architecture", "source"],
+          "properties": {
+            "platform": { "type": "string", "enum": ["windows", "linux", "macos", "other"] },
+            "osDescription": { "type": "string" },
+            "osVersion": { "type": "string" },
+            "architecture": { "type": "string" },
+            "source": { "type": "string", "const": "runtime" }
+          }
+        }
+      }
+    }
+  }
+}

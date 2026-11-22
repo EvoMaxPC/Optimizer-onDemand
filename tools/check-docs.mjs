@@ -62,6 +62,8 @@ const ALLOWED_STAGE2_FILES = new Set([
   'docs/adr/0018-tauri-surface-and-frontend-dependency-policy.md',
   'docs/adr/0019-modules-manifest.md',
   'schemas/modules-manifest.schema.json',
+  'docs/adr/0020-ipc-host-readonly-ndjson.md',
+  'schemas/ipc-host.schema.json',
   '.gitattributes'
 ]);
 
@@ -143,6 +145,10 @@ const ALLOWED_EXTERNAL_URLS = new Map([
   [
     `${HTTPS_PREFIX}evo-optimizer.local/schemas/modules-manifest.schema.json`,
     'URI simbólico local de $id del esquema del manifiesto de módulos de EVO; no es un enlace de red.'
+  ],
+  [
+    `${HTTPS_PREFIX}evo-optimizer.local/schemas/ipc-host.schema.json`,
+    'URI simbólico local de $id del contrato IPC de solo lectura de EVO; no es un enlace de red.'
   ],
   [
     `${HTTPS_PREFIX}schema.tauri.app/config/2`,
@@ -329,7 +335,10 @@ function checkAdrs() {
   const hasAdr0019 = fs.existsSync(
     path.join(adrDir, '0019-modules-manifest.md')
   );
-  const expectedCount = hasAdr0019 ? 19 : (hasAdr0018 ? 18 : 17);
+  const hasAdr0020 = fs.existsSync(
+    path.join(adrDir, '0020-ipc-host-readonly-ndjson.md')
+  );
+  const expectedCount = hasAdr0020 ? 20 : (hasAdr0019 ? 19 : (hasAdr0018 ? 18 : 17));
 
   let indexValid = adrFiles.length === expectedCount;
   let templateValid = adrFiles.length === expectedCount;
@@ -960,6 +969,89 @@ function checkModulesManifest() {
   }
 }
 
+// R13. Validar contrato IPC de solo lectura (schemas/ipc-host.schema.json)
+function checkIpcHostSchema() {
+  const schemaPath = path.join(ROOT_DIR, 'schemas/ipc-host.schema.json');
+  if (!fs.existsSync(schemaPath)) {
+    fail('R13-IPC-CONTRACT', 'No existe schemas/ipc-host.schema.json.');
+    return;
+  }
+
+  let schema;
+  try {
+    schema = JSON.parse(readTextNormalized(schemaPath));
+  } catch (err) {
+    fail('R13-IPC-CONTRACT', `schemas/ipc-host.schema.json no es JSON parseable: ${err.message}`);
+    return;
+  }
+
+  let ok = true;
+  const expectedMethods = ['engine.hello', 'engine.version', 'system.osInfo'];
+  const expectedMethodSet = new Set(expectedMethods);
+
+  function inspectObj(node, jsonPath) {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'object' && node.additionalProperties !== false) {
+      fail('R13-IPC-CONTRACT', `El subesquema de objeto en ${jsonPath} debe tener "additionalProperties": false.`);
+      ok = false;
+    }
+    if (Array.isArray(node)) {
+      node.forEach((item, idx) => inspectObj(item, `${jsonPath}[${idx}]`));
+    } else {
+      for (const [k, v] of Object.entries(node)) {
+        if (v && typeof v === 'object') inspectObj(v, `${jsonPath}.${k}`);
+      }
+    }
+  }
+  inspectObj(schema, 'root');
+
+  const oneOf = schema.properties?.methods?.items?.oneOf;
+  if (!Array.isArray(oneOf) || oneOf.length !== expectedMethods.length) {
+    fail('R13-IPC-CONTRACT', `methods.items.oneOf debe tener exactamente ${expectedMethods.length} métodos.`);
+    ok = false;
+  } else {
+    const actualMethods = [];
+    for (const branch of oneOf) {
+      const ref = branch.$ref;
+      const defName = typeof ref === 'string' && ref.startsWith('#/$defs/') ? ref.slice('#/$defs/'.length) : null;
+      const resolved = defName ? schema.$defs?.[defName] : branch;
+      const mName = resolved?.properties?.name?.const;
+      if (typeof mName !== 'string') {
+        fail('R13-IPC-CONTRACT', 'Cada rama de methods.items.oneOf debe definir properties.name.const.');
+        ok = false;
+      } else {
+        actualMethods.push(mName);
+        if (!expectedMethodSet.has(mName)) {
+          fail('R13-IPC-CONTRACT', `Método fuera de la lista permitida: "${mName}".`);
+          ok = false;
+        }
+      }
+    }
+    if (actualMethods.length === expectedMethods.length) {
+      for (let i = 0; i < expectedMethods.length; i++) {
+        if (actualMethods[i] !== expectedMethods[i]) {
+          fail('R13-IPC-CONTRACT', `Orden o método inválido en posición ${i}: se esperaba "${expectedMethods[i]}", recibido "${actualMethods[i]}".`);
+          ok = false;
+        }
+      }
+    }
+  }
+
+  const helloEnum = schema.$defs?.methodEngineHello?.properties?.result?.properties?.methods?.items?.enum;
+  if (Array.isArray(helloEnum)) {
+    for (const m of helloEnum) {
+      if (!expectedMethodSet.has(m)) {
+        fail('R13-IPC-CONTRACT', `Método fuera de la lista permitida en engine.hello.result.methods: "${m}".`);
+        ok = false;
+      }
+    }
+  }
+
+  if (ok) {
+    pass('R13-IPC-CONTRACT', 'Contrato IPC schemas/ipc-host.schema.json válido: 3 métodos en orden y additionalProperties:false.');
+  }
+}
+
 checkNoLicenseFile();
 checkStructureAndPackageJson();
 checkAdrs();
@@ -969,11 +1061,12 @@ checkNoLocalPaths();
 checkExternalUrls();
 checkCatalogSpecExample(parsedSchema);
 checkModulesManifest();
+checkIpcHostSchema();
 
 if (errors.length > 0) {
   console.error(`\nResultado: FALLÓ con ${errors.length} error(es).`);
   process.exit(1);
 } else {
-  console.log('\nResultado: TODAS LAS COMPROBACIONES (R1-R11) SUPERADAS (código 0).');
+  console.log('\nResultado: TODAS LAS COMPROBACIONES (R1-R13) SUPERADAS (código 0).');
   process.exit(0);
 }

@@ -23,3 +23,4 @@ Todos los ADRs de la Etapa F0 siguen la plantilla obligatoria: **Estado**, **Fec
 | 0017 | [0017-user-scope-in-elevated-executor.md](0017-user-scope-in-elevated-executor.md) | Resolución del Ámbito de Usuario (`HKCU`) ante Elevación Cruzada | Propuesto |
 | 0018 | [0018-tauri-surface-and-frontend-dependency-policy.md](0018-tauri-surface-and-frontend-dependency-policy.md) | Superficie Mínima de Tauri v2 y Política de Dependencias del Frontend | Aceptado |
 | 0019 | [0019-modules-manifest.md](0019-modules-manifest.md) | Manifiesto de Módulos | Aceptado |
+| 0020 | [0020-ipc-host-readonly-ndjson.md](0020-ipc-host-readonly-ndjson.md) | Contrato IPC de Solo Lectura por NDJSON (`Evo.Engine.Host`) | Aceptado |

@@ -435,6 +435,65 @@ const tests = [
       fs.writeFileSync(p, JSON.stringify(m, null, 2));
     },
   },
+  {
+    name: 'R13: esquema IPC ausente',
+    expectedRule: 'R13-IPC-CONTRACT',
+    expectPass: false,
+    mutate: (dir) => fs.unlinkSync(path.join(dir, 'schemas/ipc-host.schema.json')),
+  },
+  {
+    name: 'R13: JSON roto en esquema IPC',
+    expectedRule: 'R13-IPC-CONTRACT',
+    expectPass: false,
+    mutate: (dir) => fs.writeFileSync(path.join(dir, 'schemas/ipc-host.schema.json'), '{ broken'),
+  },
+  {
+    name: 'R13: método extra en esquema IPC',
+    expectedRule: 'R13-IPC-CONTRACT',
+    expectPass: false,
+    mutate: (dir) => {
+      const p = path.join(dir, 'schemas/ipc-host.schema.json');
+      const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+      s.properties.methods.items.oneOf.push({ type: 'object', additionalProperties: false, properties: { name: { const: 'extra.method' } } });
+      fs.writeFileSync(p, JSON.stringify(s, null, 2));
+    },
+  },
+  {
+    name: 'R13: método faltante en esquema IPC',
+    expectedRule: 'R13-IPC-CONTRACT',
+    expectPass: false,
+    mutate: (dir) => {
+      const p = path.join(dir, 'schemas/ipc-host.schema.json');
+      const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+      s.properties.methods.items.oneOf.pop();
+      fs.writeFileSync(p, JSON.stringify(s, null, 2));
+    },
+  },
+  {
+    name: 'R13: orden alterado en esquema IPC',
+    expectedRule: 'R13-IPC-CONTRACT',
+    expectPass: false,
+    mutate: (dir) => {
+      const p = path.join(dir, 'schemas/ipc-host.schema.json');
+      const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+      [s.properties.methods.items.oneOf[0], s.properties.methods.items.oneOf[1]] = [
+        s.properties.methods.items.oneOf[1],
+        s.properties.methods.items.oneOf[0],
+      ];
+      fs.writeFileSync(p, JSON.stringify(s, null, 2));
+    },
+  },
+  {
+    name: 'R13: additionalProperties true en esquema IPC',
+    expectedRule: 'R13-IPC-CONTRACT',
+    expectPass: false,
+    mutate: (dir) => {
+      const p = path.join(dir, 'schemas/ipc-host.schema.json');
+      const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+      s.additionalProperties = true;
+      fs.writeFileSync(p, JSON.stringify(s, null, 2));
+    },
+  },
 ];
 
 const schema = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'schemas/action.schema.json'), 'utf8'));
