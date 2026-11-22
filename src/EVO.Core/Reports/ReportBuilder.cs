@@ -26,7 +26,7 @@ public sealed record ReportDocument(
     int MetricsTotal,
     IReadOnlyList<ReportFinding> Findings)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true, PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
 
     /// <summary>Serialización en JSON (indentado).</summary>
     public string ToJson() => JsonSerializer.Serialize(this, JsonOptions);
