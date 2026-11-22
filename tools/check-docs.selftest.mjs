@@ -15,6 +15,29 @@ const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..');
 
 const EXCLUDE_DIRS = new Set(['.git', 'node_modules', 'dist', 'target']);
+const BINARY_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.ico', '.icns', '.woff', '.woff2', '.exe', '.dll', '.pdb', '.zip', '.tgz']);
+
+function mutateText(filePath, fn) {
+  const raw = fs.readFileSync(filePath, 'utf8');
+  const eol = raw.includes('\r\n') ? '\r\n' : '\n';
+  const normalized = raw.replace(/\r\n/g, '\n');
+  const next = fn(normalized);
+  if (typeof next === 'string') {
+    fs.writeFileSync(filePath, eol === '\r\n' ? next.replace(/\n/g, '\r\n') : next, 'utf8');
+  }
+}
+
+function convertDirToCrlf(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      convertDirToCrlf(p);
+    } else if (entry.isFile() && !BINARY_EXTS.has(path.extname(entry.name).toLowerCase())) {
+      const raw = fs.readFileSync(p, 'utf8');
+      fs.writeFileSync(p, raw.replace(/\r?\n/g, '\r\n'), 'utf8');
+    }
+  }
+}
 
 function copyRepo(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -116,9 +139,9 @@ const tests = [
     expectedRule: 'R4-ADR-INDEX',
     expectPass: false,
     mutate: (dir) => {
-      const p = path.join(dir, 'docs/adr/README.md');
-      const c = fs.readFileSync(p, 'utf8').replace(/.*0018-tauri-surface-and-frontend-dependency-policy\.md.*\n/, '');
-      fs.writeFileSync(p, c);
+      mutateText(path.join(dir, 'docs/adr/README.md'), (c) =>
+        c.replace(/.*0018-tauri-surface-and-frontend-dependency-policy\.md.*\n/, '')
+      );
     },
   },
   {
@@ -503,15 +526,24 @@ for (const reqField of schema.required) {
     expectedRule: 'R11-EXAMPLE-STRUCTURE',
     expectPass: false,
     mutate: (dir) => {
-      const p = path.join(dir, 'docs/catalog/CATALOG_SPEC.md');
-      const c = fs.readFileSync(p, 'utf8');
-      const m = c.match(/```json\n([\s\S]*?)\n```/);
-      const ex = JSON.parse(m[1]);
-      delete ex[reqField];
-      fs.writeFileSync(p, c.replace(m[1], JSON.stringify(ex, null, 2)));
+      mutateText(path.join(dir, 'docs/catalog/CATALOG_SPEC.md'), (c) => {
+        const m = c.match(/```json\n([\s\S]*?)\n```/);
+        const ex = JSON.parse(m[1]);
+        delete ex[reqField];
+        return c.replace(m[1], JSON.stringify(ex, null, 2));
+      });
     },
   });
 }
+
+tests.unshift({
+  name: 'Base: copia con todos los archivos de texto en CRLF debe pasar',
+  expectedRule: null,
+  expectPass: true,
+  mutate: (dir) => {
+    convertDirToCrlf(dir);
+  },
+});
 
 let failures = 0;
 for (const t of tests) {
