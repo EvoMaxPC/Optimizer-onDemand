@@ -1,6 +1,6 @@
 # ETAPA 06 — M06 PROCESS INTELLIGENCE (Consumo por proceso)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44985121178, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -55,9 +55,9 @@ El hallazgo **no es un cuello de botella**: jamás se declara uno por uso elevad
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E06-01 | `EVO.Collectors.Processes.ProcessAnalyzerCollector` (M06) creado y compila | ⏳ |
-| E06-02 | Tests xUnit de M06 — pasan en CI (`windows-latest`, CIM real) | ⏳ |
-| E06-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E06-01 | `EVO.Collectors.Processes.ProcessAnalyzerCollector` (M06) creado y compila | ✅ CI_RUNNER (run 44985121178) |
+| E06-02 | Tests xUnit de M06 (6 Facts) — pasan en CI (`windows-latest`, CIM real) | ✅ CI_RUNNER (run 44985121178) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox). Nota: la primera iteración falló en CI (`CountsProcesses`) por depender del contador de perf para el conteo; la corrección usa Win32_Process para el conteo y perf solo para uso de CPU/memoria |
+| E06-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44985121178) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -73,4 +73,14 @@ El hallazgo **no es un cuello de botella**: jamás se declara uno por uso elevad
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44985121178, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (6 Facts de M06 + los existentes de M01/M02/M03/M04).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M06).
+
+**Pendiente:** E06-04 — PC del usuario (verificar M06 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
