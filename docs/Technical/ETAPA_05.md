@@ -1,6 +1,6 @@
 # ETAPA 05 — M04 STORAGE ANALYZER (Latencia e I/O)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44984575119, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -51,9 +51,9 @@ M04 aporta la evidencia que M14 consume.
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E05-01 | `EVO.Collectors.Storage.StorageAnalyzerCollector` (M04) creado y compila | ⏳ |
-| E05-02 | Tests xUnit de M04 — pasan en CI (`windows-latest`, CIM real) | ⏳ |
-| E05-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E05-01 | `EVO.Collectors.Storage.StorageAnalyzerCollector` (M04) creado y compila | ✅ CI_RUNNER (run 44984575119) |
+| E05-02 | Tests xUnit de M04 (6 Facts) — pasan en CI (`windows-latest`, CIM real) | ✅ CI_RUNNER (run 44984575119) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox) |
+| E05-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44984575119) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -67,4 +67,14 @@ M04 aporta la evidencia que M14 consume.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44984575119, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (6 Facts de M04 + los existentes de M01/M02/M03).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M04).
+
+**Pendiente:** E05-04 — PC del usuario (verificar M04 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
