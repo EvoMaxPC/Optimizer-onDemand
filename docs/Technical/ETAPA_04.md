@@ -1,6 +1,6 @@
 # ETAPA 04 — M03 RAM ANALYZER (Presión y paginación)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44984373599, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -60,9 +60,9 @@ que investigar.
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E04-01 | `EVO.Collectors.Memory.RamAnalyzerCollector` (M03) creado y compila | ⏳ |
-| E04-02 | Tests xUnit de M03 — pasan en CI (`windows-latest`, CIM real) | ⏳ |
-| E04-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E04-01 | `EVO.Collectors.Memory.RamAnalyzerCollector` (M03) creado y compila | ✅ CI_RUNNER (run 44984373599) |
+| E04-02 | Tests xUnit de M03 (6 Facts) — pasan en CI (`windows-latest`, CIM real) | ✅ CI_RUNNER (run 44984373599) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox) |
+| E04-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44984373599) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -79,4 +79,14 @@ que investigar.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44984373599, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (6 Facts de M03 + los existentes de M01 y M02).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M03).
+
+**Pendiente:** E04-04 — PC del usuario (verificar M03 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
