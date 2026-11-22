@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>EVO.Collectors</RootNamespace>
+    <AssemblyName>EVO.Collectors</AssemblyName>
+    <Version>0.1.0</Version>
+    <Company>EVO LABS</Company>
+    <Product>EVO BOTTLENECK DETECTOR</Product>
+    <Description>Recolectores de hardware y sistema para EVO BOTTLENECK DETECTOR.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="10.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EVO.Core\EVO.Core.csproj" />
+  </ItemGroup>
+
+</Project>

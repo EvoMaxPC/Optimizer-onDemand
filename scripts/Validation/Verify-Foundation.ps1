@@ -78,10 +78,14 @@ Check-Path "EVO.sln" "EVO.sln"
 Check-Path "src\EVO.Core\EVO.Core.csproj" "EVO.Core.csproj"
 Check-Path "src\EVO.Desktop\EVO.Desktop.csproj" "EVO.Desktop.csproj"
 Check-Path "tests\EVO.Core.Tests\EVO.Core.Tests.csproj" "EVO.Core.Tests.csproj"
+Check-Path "src\EVO.Collectors\EVO.Collectors.csproj" "EVO.Collectors.csproj"
+Check-Path "tests\EVO.Collectors.Tests\EVO.Collectors.Tests.csproj" "EVO.Collectors.Tests.csproj"
 $sln = Get-Content (Join-Path $Root "EVO.sln") -Raw -ErrorAction SilentlyContinue
 if ($sln -match "EVO.Core.csproj") { Write-Pass "EVO.sln referencia EVO.Core" } else { Write-Fail "EVO.sln no menciona EVO.Core" }
 if ($sln -match "EVO.Desktop.csproj") { Write-Pass "EVO.sln referencia EVO.Desktop" } else { Write-Fail "EVO.sln no menciona EVO.Desktop" }
 if ($sln -match "EVO.Core.Tests.csproj") { Write-Pass "EVO.sln referencia EVO.Core.Tests" } else { Write-Fail "EVO.sln no menciona EVO.Core.Tests" }
+if ($sln -match "EVO.Collectors.csproj") { Write-Pass "EVO.sln referencia EVO.Collectors" } else { Write-Fail "EVO.sln no menciona EVO.Collectors" }
+if ($sln -match "EVO.Collectors.Tests.csproj") { Write-Pass "EVO.sln referencia EVO.Collectors.Tests" } else { Write-Fail "EVO.sln no menciona EVO.Collectors.Tests" }
 
 Write-Host ""
 Write-Host "[F04] Contratos y modelos" -ForegroundColor Cyan
@@ -94,6 +98,8 @@ Check-Path "src\EVO.Core\Findings\DiagnosticFinding.cs" "DiagnosticFinding.cs"
 Check-Path "src\EVO.Core\Findings\Evidence.cs" "Evidence.cs"
 Check-Path "src\EVO.Core\Findings\FindingConfidence.cs" "FindingConfidence.cs"
 Check-Path "src\EVO.Core\Findings\Severity.cs" "Severity.cs"
+Check-Path "src\EVO.Core\Contracts\Metric.cs" "Metric.cs (string+numeric)"
+Check-Path "src\EVO.Collectors\Hardware\SystemIntelligenceCollector.cs" "SystemIntelligenceCollector.cs"
 
 Write-Host ""
 Write-Host "[F05] Configuracion y logging" -ForegroundColor Cyan

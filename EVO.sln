@@ -8,6 +8,10 @@ Project("{9A19103F-16F7-4668-BFE3-9A1E7F4F8D33}") = "EVO.Core", "src\EVO.Core\EV
 EndProject
 Project("{9A19103F-16F7-4668-BFE3-9A1E7F4F8D33}") = "EVO.Core.Tests", "tests\EVO.Core.Tests\EVO.Core.Tests.csproj", "{0D2B2136-FDD6-492E-84F2-6FF1C9081553}"
 EndProject
+Project("{9A19103F-16F7-4668-BFE3-9A1E7F4F8D33}") = "EVO.Collectors", "src\EVO.Collectors\EVO.Collectors.csproj", "{95D68DF0-8E1F-4CC4-9267-5C41C2CFB9AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BFE3-9A1E7F4F8D33}") = "EVO.Collectors.Tests", "tests\EVO.Collectors.Tests\EVO.Collectors.Tests.csproj", "{0D28230B-4851-4621-834A-5032F91F5ECE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +33,13 @@ Global
 		{0D2B2136-FDD6-492E-84F2-6FF1C9081553}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D2B2136-FDD6-492E-84F2-6FF1C9081553}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D2B2136-FDD6-492E-84F2-6FF1C9081553}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
+		{95D68DF0-8E1F-4CC4-9267-5C41C2CFB9AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D68DF0-8E1F-4CC4-9267-5C41C2CFB9AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D68DF0-8E1F-4CC4-9267-5C41C2CFB9AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D68DF0-8E1F-4CC4-9267-5C41C2CFB9AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D28230B-4851-4621-834A-5032F91F5ECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D28230B-4851-4621-834A-5032F91F5ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D28230B-4851-4621-834A-5032F91F5ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D28230B-4851-4621-834A-5032F91F5ECE}.Release|Any CPU.Build.0 = Release|Any CPU
+EndGlobalSection
 EndGlobal
