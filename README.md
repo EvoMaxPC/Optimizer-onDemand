@@ -47,6 +47,15 @@ servidores externos; diagnóstico **solo lectura** por defecto.
 
 Ver estado detallado en [`docs/Technical/FOUNDATION.md`](docs/Technical/FOUNDATION.md).
 
+## ETAPA 02 — M01 System Intelligence
+
+Primero módulo real de la arquitectura: inventario completo del sistema Windows
+(OS, CPU, RAM, almacenamiento, GPU) mediante CIM / WMI.
+
+Ver [`docs/Technical/ETAPA_02.md`](docs/Technical/ETAPA_02.md).
+
+Proyecto: `src/EVO.Collectors/` (`SystemIntelligenceCollector`, módulo M01).
+
 ## Estructura del repositorio
 
 ```

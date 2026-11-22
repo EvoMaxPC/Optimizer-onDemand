@@ -26,6 +26,7 @@
 | D-013  | Modelo de diagnóstico: `DiagnosticFinding` con cinco conceptos (Métrica, Anomalía, Evidencia, Causa probable, Recomendación) y `FindingConfidence` de 5 estados (Confirmed / Probable / Warning / Normal / InsufficientData). **PROPUESTA PENDIENTE DE APROBACIÓN** — ver revisión 3e. | ⚠️ PROPUESTA PENDIENTE DE APROBACIÓN | 2026-11-22  |
 | D-014  | Nombre del producto: **EVO BOTTLENECK DETECTOR** (EVO LABS). **PROPUESTA PENDIENTE DE APROBACIÓN**. | ⚠️ PROPUESTA PENDIENTE DE APROBACIÓN | 2026-11-22  |
 | D-015  | Excepción de gobernanza: directorios `data/`, `logs/`, `reports/` se preservan en git con `.gitkeep` vacío y `.gitignore` ignora su contenido. Sin esta excepción, la estructura portable no se preservaría en el paquete. | ⚠️ Propuesta — no aprobada | 2026-11-22  |
+| D-016  | Extensión de `Metric` con `StringValue` opcional (hecho string vs dato numérico). Additive a los contratos de FOUNDATION. | ⚠️ Propuesta — no aprobada | 2026-11-22  |
 
 ## Regla de cambios
 
