@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EVO.Core\EVO.Core.csproj" />
+    <ProjectReference Include="..\EVO.Collectors\EVO.Collectors.csproj" />
   </ItemGroup>
 
   <ItemGroup>

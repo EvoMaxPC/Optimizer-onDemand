@@ -7,8 +7,5 @@ namespace EVO.Desktop;
 /// </summary>
 public partial class App : Application
 {
-    public App()
-    {
-        // StartupUri = "MainWindow.xaml" (ver App.xaml)
-    }
+    // WPF crea la ventana al arrancar (StartupUri) con el patrón estándar.
 }
