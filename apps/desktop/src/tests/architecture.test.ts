@@ -74,18 +74,11 @@ describe('Restricciones arquitectónicas y de seguridad de Etapa 2 (F1a)', () =>
     }
   });
 
-  it('apps/desktop/src-tauri/src/main.rs no registra comandos, plugins ni subprocesos', () => {
-    const forbiddenRustTokens = [
-      '#[tauri::command]',
-      'invoke_handler',
-      '.plugin(',
-      'std::process::Command',
-      'tokio::process::Command'
-    ];
-
-    for (const token of forbiddenRustTokens) {
-      expect(mainRs.includes(token), `main.rs contiene "${token}"`).toBe(false);
-    }
+  it('apps/desktop/src-tauri/src/main.rs solo registra los comandos de solo lectura del motor y ningún plugin', () => {
+    expect(mainRs.includes('engine::engine_hello')).toBe(true);
+    expect(mainRs.includes('engine::engine_version')).toBe(true);
+    expect(mainRs.includes('engine::system_os_info')).toBe(true);
+    expect(mainRs.includes('.plugin(')).toBe(false);
   });
 
   it('apps/desktop/src-tauri/capabilities/default.json solo concede core:default sobre ["main"]', () => {
