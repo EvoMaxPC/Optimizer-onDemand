@@ -29,7 +29,13 @@ jobs:
         run: dotnet restore EVO.sln
 
       - name: dotnet build (Release)
-        run: dotnet build EVO.sln -c Release --no-restore
+        run: |
+          $log = dotnet build EVO.sln -c Release --no-restore 2>&1 | Out-String
+          $log | Tee-Object -FilePath build-error.txt
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "BUILD FAILURE — see build-error.txt artifact" -ForegroundColor Red
+            exit $LASTEXITCODE
+          }
 
       - name: dotnet test (trx)
         run: dotnet test EVO.sln -c Release --no-build --logger "trx;LogFilePrefix=EVO-Test" --results-directory TestResults
@@ -43,7 +49,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: foundation-trx
-          path: TestResults/**/*.trx
+          path: |
+            TestResults/**/*.trx
+            build-error.txt
           if-no-files-found: warn
 
       - name: Upload verification output (CI_RUNNER) — also on failure
