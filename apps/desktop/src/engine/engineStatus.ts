@@ -1,7 +1,64 @@
-/**
- * Única fuente de estado del motor en Etapa 3 (F1b).
- * En Etapa 4 (F2), este valor se sustituye por el handshake real con el motor .NET.
- */
+export type EngineConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+
 export const engineStatus = 'disconnected' as const;
 
-export type EngineConnectionStatus = typeof engineStatus;
+export interface EngineHelloResult {
+  protocolVersion: number;
+  engineName: string;
+  readOnly: boolean;
+  methods: string[];
+}
+
+export interface EngineVersionResult {
+  engineVersion: string;
+  runtime: string;
+}
+
+export interface SystemOsInfoResult {
+  osDescription: string;
+  osArchitecture: string;
+  processArchitecture: string;
+  machineName: string;
+}
+
+export interface EngineSnapshot {
+  status: EngineConnectionStatus;
+  hello?: EngineHelloResult;
+  version?: EngineVersionResult;
+  osInfo?: SystemOsInfoResult;
+  error?: string;
+}
+
+type TauriInvoke = <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+
+function getTauriInvoke(): TauriInvoke | null {
+  if (typeof window === 'undefined') return null;
+  const w = window as unknown as { __TAURI_INTERNALS__?: { invoke?: TauriInvoke } };
+  return typeof w.__TAURI_INTERNALS__?.invoke === 'function' ? w.__TAURI_INTERNALS__.invoke : null;
+}
+
+export async function probeEngine(): Promise<EngineSnapshot> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    return { status: 'disconnected' };
+  }
+
+  try {
+    const [hello, version, osInfo] = await Promise.all([
+      invoke<EngineHelloResult>('engine_hello', { clientName: 'evo-desktop', protocolVersion: 1 }),
+      invoke<EngineVersionResult>('engine_version'),
+      invoke<SystemOsInfoResult>('system_os_info'),
+    ]);
+    return {
+      status: 'connected',
+      hello,
+      version,
+      osInfo,
+    };
+  } catch (err) {
+    return {
+      status: 'error',
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
