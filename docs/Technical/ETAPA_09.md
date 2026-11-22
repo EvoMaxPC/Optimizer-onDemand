@@ -1,6 +1,6 @@
 # ETAPA 09 — M09 DRIVER INTELLIGENCE (Auditoría de controladores)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44988109674, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -45,9 +45,9 @@ a M14 (correlación). M09 aporta la evidencia que M14 consume.
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E09-01 | `EVO.Collectors.Drivers.DriverAnalyzerCollector` (M09) creado y compila | ⏳ |
-| E09-02 | Tests xUnit de M09 — pasan en CI (`windows-latest`, CIM real) | ⏳ |
-| E09-03 | Docs commiteados; PR #1 continúa | ⏳ |
+| E09-01 | `EVO.Collectors.Drivers.DriverAnalyzerCollector` (M09) creado y compila | ✅ CI_RUNNER (run 44988109674) |
+| E09-02 | Tests xUnit de M09 (5 Facts) — pasan en CI (`windows-latest`, CIM real) | ✅ CI_RUNNER (run 44988109674) — workflow verde; contadores exactos no citados (host de .trx bloqueado en este sandbox) |
+| E09-03 | Docs commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44988109674) |
 
 ## 6. Decisiones de diseño concretas
 
@@ -59,4 +59,14 @@ a M14 (correlación). M09 aporta la evidencia que M14 consume.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: CI verde.
+🟢 **CI verde (CI_RUNNER)** — run 44988109674, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (5 Facts de M09 + los existentes de M01/M02/M03/M04/M06/M07/M08).
+- `Verify-Foundation.ps1`: OK (incluye la extensión de M09).
+
+**Pendiente:** E09-04 — PC del usuario (verificar M09 en máquina real del dueño).
+El check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
