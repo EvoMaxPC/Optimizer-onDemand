@@ -21,12 +21,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout repository
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node.js 22 LTS
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
 
@@ -42,16 +40,13 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup pnpm
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
       - name: Setup Node.js 22 LTS
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -79,16 +74,13 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout repository
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup pnpm
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
       - name: Setup Node.js 22 LTS
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -100,8 +92,7 @@ jobs:
         run: pnpm --filter @evo/desktop build
 
       - name: Setup Rust stable toolchain
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
 
       - name: Print Node, pnpm and Rust versions
         run: |
@@ -120,12 +111,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup .NET 10 SDK
-        # TODO: fijar por SHA de commit completo (40 caracteres)
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           dotnet-version: '10.0.x'
 
