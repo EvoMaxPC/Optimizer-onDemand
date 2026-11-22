@@ -1,0 +1,26 @@
+# Artefactos de sistema operativo y editores
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vs/
+.vscode/
+.idea/
+
+# Dependencias y artefactos de compilación (Etapa 2 / F1a y posteriores)
+node_modules/
+dist/
+build/
+target/
+apps/desktop/src-tauri/gen/
+coverage/
+.vite/
+bin/
+obj/
+out/
+
+# Bases de datos locales y registros temporales
+*.db
+*.db-wal
+*.db-shm
+*.log
+*.tsbuildinfo

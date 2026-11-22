@@ -1,0 +1,139 @@
+name: CI (Etapa 2 / F1a — Docs, Web & Tauri Validation)
+
+on:
+  push:
+    branches:
+      - main
+      - 'arena/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Validar documentación, esquemas y ADRs (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run check-docs validator
+        run: node tools/check-docs.mjs
+
+      - name: Run check-docs mutation selftest
+        run: node tools/check-docs.selftest.mjs
+
+  web:
+    name: Validar frontend React + TypeScript + Vitest (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22 LTS
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Print Node and pnpm versions
+        run: |
+          node --version
+          pnpm --version
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck desktop frontend
+        run: pnpm --filter @evo/desktop typecheck
+
+      - name: Run desktop Vitest suite
+        run: pnpm --filter @evo/desktop test
+
+      - name: Build desktop frontend
+        run: pnpm --filter @evo/desktop build
+
+  tauri:
+    name: Validar contenedor nativo Tauri v2 con cargo check (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22 LTS
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend dist required by tauri::generate_context!()
+        run: pnpm --filter @evo/desktop build
+
+      - name: Setup Rust stable toolchain
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Print Node, pnpm and Rust versions
+        run: |
+          node --version
+          pnpm --version
+          rustc --version
+          cargo --version
+
+      # TODO: activar cargo clippy --all-targets --locked -- -D warnings y --locked cuando exista Cargo.lock commiteado
+      - name: Check Tauri crate with cargo check
+        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
+
+  engine:
+    name: Validar host .NET de solo lectura (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        # TODO: fijar por SHA de commit completo (40 caracteres)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore .NET dependencies
+        run: dotnet restore engine/Evo.Engine.sln
+
+      - name: Build .NET host and tests
+        run: dotnet build engine/Evo.Engine.sln -c Release -warnaserror
+
+      - name: Test .NET host
+        run: dotnet test engine/Evo.Engine.sln -c Release --no-build

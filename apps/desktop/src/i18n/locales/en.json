@@ -1,0 +1,137 @@
+{
+  "app": {
+    "brand": "EVO",
+    "subtitle": "Desktop shell (Stage 2 / F1a)",
+    "navAriaLabel": "Primary navigation"
+  },
+  "nav": {
+    "overview": "Overview",
+    "history": "History",
+    "settings": "Settings",
+    "modules": "Modules"
+  },
+  "statusBar": {
+    "engineDisconnected": "Engine not connected",
+    "cannotModifyWindows": "This build cannot modify Windows",
+    "stageBadge": "Stage 2 (F1a)"
+  },
+  "overview": {
+    "title": "Architectural shell overview",
+    "mottoLabel": "Non-negotiable guiding principle",
+    "motto": "If it cannot be explained, measured, verified, and reverted, it is not executed.",
+    "noticeTitle": "Honest status for Stage 2 (F1a)",
+    "noticeBody": "The native engine is not yet implemented in this build. This shell version neither reads operating system state nor performs changes on Windows.",
+    "nextStagesNote": "Module manifests without live system data arrive in Stage 3 (F1b) and the read-only .NET engine integrates in Stage 4 (F2).",
+    "pillarsTitle": "Five architectural pillars",
+    "pillars": {
+      "explainable": {
+        "name": "Explainable",
+        "description": "Every card in the closed catalog states in clear technical language its exact mechanism, scope, and real trade-offs."
+      },
+      "measurable": {
+        "name": "Measurable",
+        "description": "Every action records objective before-and-after evidence or explicitly declares why its effect is only structurally verifiable."
+      },
+      "verifiable": {
+        "name": "Verifiable",
+        "description": "The engine independently confirms that the expected technical state holds after execution and detects any subsequent drift."
+      },
+      "reversible": {
+        "name": "Reversible",
+        "description": "No action runs without first capturing the real prior value in persistent storage along with its documented restoration method."
+      },
+      "adaptive": {
+        "name": "Adaptive",
+        "description": "Recommendations depend on the machine's real technical profile and the user's declared intent, governed by the Adaptive Core."
+      }
+    }
+  },
+  "history": {
+    "title": "Action and evidence history",
+    "emptyTitle": "History storage not yet available",
+    "emptyBody": "In Stage 2 (F1a) there is no local database or execution log. SQLite persistence, versioned migrations, and the verifiable evidence chain arrive in Stage 5 (F3).",
+    "guaranteeNote": "Once Stage 5 (F3) is active, this view will display exclusively real records read from SQLite with their prior state, executed change, and verification."
+  },
+  "settings": {
+    "title": "Shell settings",
+    "languageSectionTitle": "Interface language",
+    "languageDescription": "Select the active language for the current session. In Stage 2 (F1a) this preference is kept in memory only; SQLite persistence arrives in Stage 5 (F3).",
+    "languageEs": "Spanish (es)",
+    "languageEn": "English (en)",
+    "systemInfoTitle": "Build technical status (read-only)",
+    "stageLabel": "Current stage",
+    "stageValue": "Stage 2 (F1a) — Tauri v2 + React shell without engine",
+    "engineLabel": "Engine status",
+    "engineValue": "Not implemented (planned for Stage 4 / F2)",
+    "storageLabel": "Local storage",
+    "storageValue": "In-memory for current session (SQLite planned for Stage 5 / F3)",
+    "windowsAccessLabel": "Windows access",
+    "windowsAccessValue": "None: this build neither reads nor modifies the operating system"
+  },
+  "modules": {
+    "title": "Modules",
+    "subtitle": "Structural catalog of modules loaded from the manifest.",
+    "unavailableBadge": "Unavailable",
+    "unavailableDetailBadge": "Unavailable: engine not connected",
+    "motorDisconnected": "Engine not connected",
+    "plannedLabel": "Planned",
+    "categoriesLabel": "Categories",
+    "capabilitiesLabel": "Capabilities",
+    "proposalPhrase": "EVO prepares and proposes; with your authorization, it applies.",
+    "unknownTitle": "Unknown module",
+    "unknownDescription": "The requested identifier does not exist in the modules manifest.",
+    "backToModules": "Back to Modules",
+    "manifestErrorTitle": "Modules manifest error",
+    "manifestErrorDescription": "Could not validate the modules manifest at startup.",
+    "capabilities": {
+      "probes": "Read probes",
+      "dossiers": "Technical dossiers",
+      "actions": "Authorized actions"
+    },
+    "items": {
+      "gaming": {
+        "name": "Gaming",
+        "description": "Latency, GPU scheduling, and game priorities."
+      },
+      "memory": {
+        "name": "Memory",
+        "description": "Physical memory, paging, and cache management."
+      },
+      "system": {
+        "name": "System",
+        "description": "Services, power, startup, shell, and system maintenance."
+      },
+      "network": {
+        "name": "Network",
+        "description": "Network stack, DNS, and adapter parameters."
+      },
+      "storage": {
+        "name": "Storage",
+        "description": "Storage, TRIM, cleanup, and disk policies."
+      },
+      "security": {
+        "name": "Security",
+        "description": "Telemetry, privacy, and security surface."
+      }
+    },
+    "categories": {
+      "1": "Startup and session",
+      "2": "System services",
+      "3": "Scheduled tasks",
+      "4": "Privacy and telemetry",
+      "5": "Graphics and display",
+      "6": "Memory and paging",
+      "7": "Latency and timers",
+      "8": "Game priority",
+      "9": "Storage and disks",
+      "10": "Network and DNS",
+      "11": "Power and CPU",
+      "12": "Security and isolation",
+      "13": "Shell and desktop",
+      "14": "Updates",
+      "15": "UWP applications",
+      "16": "Input and peripherals",
+      "17": "Diagnostics and maintenance"
+    }
+  }
+}
