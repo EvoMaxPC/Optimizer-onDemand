@@ -11,10 +11,15 @@ namespace EVO.Collectors.Processes;
 /// eso pertenece a M14 — Bottleneck Engine (correlación de evidencia).
 /// </summary>
 /// <remarks>
-/// Recolección best-effort: si la consulta de rendimiento de procesos falla,
-/// la sección se omite sin abortar. Métricas instantáneas, no series temporales
-/// (eso es M16 — EVO Live). Solo se emite el máximo de cada atributo — un ranking
-/// completo por proceso es trabajo del dashboard (M15) y de la correlación (M14).
+/// Recolección best-effort, dos vías independientes:
+/// <list type="bullet">
+/// <item><description>Inventario de procesos vía <c>Win32_Process</c> — confiable, liviano, siempre presente.</description></item>
+/// <item><description>Uso de CPU/memoria vía contadores <c>Win32_PerfFormattedData_PerfProc_Process</c> — best-effort: si el contador no está disponible
+/// (driver deshabilitado, permisos, entorno sin perf), el bloque se omite sin abortar.</description></item>
+/// </list>
+/// Las métricas son instantáneas, no series temporales (eso es M16 — EVO Live).
+/// Solo se emite el máximo de cada atributo — un ranking completo por proceso es
+/// trabajo del dashboard (M15) y de la correlación (M14).
 /// </remarks>
 public sealed class ProcessAnalyzerCollector : ICollector
 {
@@ -33,16 +38,16 @@ public sealed class ProcessAnalyzerCollector : ICollector
         var metrics = new List<Metric>();
         var findings = new List<DiagnosticFinding>();
 
+        int processCount = 0;
         string? topCpuName = null;
         double topCpu = 0.0;
         double topMemoryMb = 0.0;
-        int processCount = 0;
 
-        try
-        {
-            CollectProcesses(metrics, collectedAt, ref processCount, ref topCpuName, ref topCpu, ref topMemoryMb);
-        }
-        catch { /* mejor esfuerzo: omitir la sección */ }
+        try { CollectCount(ref processCount); }
+        catch { /* mejor esfuerzo: omitir el conteo */ }
+
+        try { CollectUsage(ref topCpuName, ref topCpu, ref topMemoryMb); }
+        catch { /* mejor esfuerzo: omitir uso de CPU/memoria */ }
 
         metrics.Add(new Metric("process.count", "count", processCount, collectedAt));
         metrics.Add(new Metric("process.top_cpu_percent", "%", topCpu, collectedAt));
@@ -50,27 +55,25 @@ public sealed class ProcessAnalyzerCollector : ICollector
 
         if (topCpu >= HighCpuThresholdPercent)
         {
-            findings.Add(CreateHighCpuFinding(topCpu, topCpuName, collectedAt));
+            findings.Add(CreateHighCpuFinding(topCpu, topCpuName));
         }
 
         return Task.FromResult(CollectResult.Create(ModuleId, metrics, findings));
     }
 
-    private static void CollectProcesses(
-        List<Metric> metrics,
-        DateTimeOffset at,
-        ref int processCount,
-        ref string? topCpuName,
-        ref double topCpu,
-        ref double topMemoryMb)
+    private static void CollectCount(ref int processCount)
+    {
+        using var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_Process");
+        processCount = searcher.Get().Count;
+    }
+
+    private static void CollectUsage(ref string? topCpuName, ref double topCpu, ref double topMemoryMb)
     {
         using var searcher = new ManagementObjectSearcher(
-            "SELECT Name, '% Processor Time', 'Working Set' FROM Win32_PerfFormattedData_PerfProc_Process");
+            "SELECT * FROM Win32_PerfFormattedData_PerfProc_Process");
 
         foreach (ManagementObject row in searcher.Get())
         {
-            processCount++;
-
             var name = row["Name"]?.ToString();
 
             var cpuRaw = row["% Processor Time"];
@@ -80,17 +83,24 @@ public sealed class ProcessAnalyzerCollector : ICollector
                 topCpuName = name;
             }
 
-            var memoryRaw = row["Working Set"];
-            if (memoryRaw is not null && long.TryParse(memoryRaw.ToString(), out long workingSetBytes))
+            // "Working Set" o variantes: se leen defensivamente.
+            foreach (var property in new[] { "Working Set", "Private Bytes" })
             {
+                var raw = row[property];
+                if (raw is null)
+                    continue;
+                if (!long.TryParse(raw.ToString(), out long workingSetBytes))
+                    continue;
+
                 var memoryMb = workingSetBytes / (1024.0 * 1024);
                 if (memoryMb > topMemoryMb)
                     topMemoryMb = memoryMb;
+                break;
             }
         }
     }
 
-    private static DiagnosticFinding CreateHighCpuFinding(double topCpu, string? topCpuName, DateTimeOffset at)
+    private static DiagnosticFinding CreateHighCpuFinding(double topCpu, string? topCpuName)
     {
         var name = string.IsNullOrWhiteSpace(topCpuName) ? "proceso" : topCpuName!;
         return DiagnosticFinding.Create(
