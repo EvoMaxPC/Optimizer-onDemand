@@ -1,5 +1,4 @@
 using System.Windows;
-using EVO.Desktop.ViewModels;
 
 namespace EVO.Desktop;
 
@@ -8,9 +7,6 @@ namespace EVO.Desktop;
 /// </summary>
 public partial class App : Application
 {
-    public App()
-    {
-        var viewModel = new MainViewModel();
-        MainWindow = new MainWindow(viewModel);
-    }
+    // StartupUri = "MainWindow.xaml" (ver App.xaml). WPF crea la ventana;
+    // el ViewModel se construye dentro de MainWindow.
 }
