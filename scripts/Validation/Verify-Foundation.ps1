@@ -35,7 +35,7 @@ function Check-Dir($relativePath, $label) {
 
 Write-Host "`nEVO BOTTLENECK DETECTOR — FOUNDATION VERIFICATION" -ForegroundColor Yellow
 $script:Results.Add("== EVO BOTTLENECK DETECTOR — FOUNDATION VERIFICATION ==")
-$script:Results.Add("Fecha: $(Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")")
+$script:Results.Add("Fecha: " + (Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ'))
 
 Write-Host "`n[F01] Estructura y decisiones" -ForegroundColor Cyan
 $script:Results.Add("")
@@ -85,7 +85,7 @@ $script:Results.Add("")
 $script:Results.Add("[F06] Pendiente — requiere Windows + .NET 10 SDK (F06 requiere: dotnet build, dotnet test)")
 if (Get-Command dotnet -ErrorAction SilentlyContinue) {
     $sdks = dotnet --list-sdks
-    $script:Results.Add("  SDK: $($sdks -join ", ")")
+    $script:Results.Add('  SDK: ' + ($sdks -join ', '))
     if ($sdks -match "10\.") {
         Pass ".NET 10 SDK encontrado"
     } else {
