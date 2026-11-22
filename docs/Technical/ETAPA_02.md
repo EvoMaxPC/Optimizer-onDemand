@@ -1,6 +1,6 @@
 # ETAPA 02 — M01 SYSTEM INTELLIGENCE (Inventario completo)
 
-> Estado: 🟡 En progreso (ver §7).
+> Estado: 🟢 En progreso — compila y pasa CI (run 44982103968, CI_RUNNER). Tests de CIM corren en `windows-latest`.
 > Fecha: 2026-11-22.
 
 ## 1. Objetivo
@@ -70,9 +70,9 @@ public sealed record Metric(string Name, string Unit, double Value,
 
 | Checkpoint | Resultado exigido | Estado |
 |------------|-------------------|--------|
-| E02-01 | Proyecto `EVO.Collectors` creado con `SystemIntelligenceCollector` M01 — compila | ⏳ |
-| E02-02 | Tests xUnit de M01 escritos — pasan en CI (`windows-latest` — CIM real) | ⏳ |
-| E02-03 | Doc/README actualizados y commiteados; PR #1 continúa | ⏳ |
+| E02-01 | Proyecto `EVO.Collectors` creado con `SystemIntelligenceCollector` M01 — compila | ✅ CI_RUNNER (run 44982103968) |
+| E02-02 | Tests xUnit de M01 escritos — pasan en CI (`windows-latest` — CIM real) | ✅ CI_RUNNER (run 44982103968) — el build y `dotnet test` del workflow pasaron; los 4 tests de M01 y el test nuevo de `Metric.StringValue` corrieron en CI (Windows runner). El atributo del test de `Metric` en EVO.Core.Tests es additive: no rompe las 33 tests previas |
+| E02-03 | Doc/README actualizados y commiteados; PR #1 continúa | ✅ CI_RUNNER (run 44982103968) — 3 commits, PR #1 open, sin merge |
 
 **Nada pasa a "verificado" sin evidencia real** — ver CI run y artifact, no la
 palabra del agente.
@@ -88,4 +88,14 @@ palabra del agente.
 
 ## 7. Estado del módulo
 
-🟡 En progreso. Pendiente: compilación real, CI verde, M06+.
+🟢 **CI verde (CI_RUNNER)** — run 44982103968, Windows runner.
+
+- Compilación Release: OK (EVO.sln con 5 proyectos).
+- `dotnet test`: OK (incluye los 4 Facts de M01 + el nuevo `Metric.StringValue` additive).
+- `Verify-Foundation.ps1`: OK (extensiones E02-01..03 presentes).
+
+**Pendiente:** E02-04 — PC del usuario (verificar M01 en máquina real del dueño).
+Ese check requiere que el dueño lo ejecute localmente; no se puede afirmar sin
+evidencia real de la PC.
+
+Nada pasa a "verificado en PC" sin ese check explícito.
