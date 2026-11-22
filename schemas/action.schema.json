@@ -1,0 +1,1051 @@
+{
+  "$comment": "BORRADOR F0, no validado contra Windows real",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://evo-optimizer.local/schemas/action.schema.json",
+  "title": "EVO Optimizer Catalog Action Specification (Draft F0 - Audited A3)",
+  "description": "Contrato declarativo para fichas de acción del catálogo cerrado de EVO Optimizer. Define changes[] como unión discriminada por primitive con campos tipados y patrones acotados. Prohíbe comandos libres, scripts inline y rutas arbitrarias.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "status",
+    "category",
+    "scope",
+    "componentClass",
+    "consentLevel",
+    "primitive",
+    "i18n",
+    "windowsCompatibility",
+    "hardwareCompatibility",
+    "changes",
+    "dependencies",
+    "conflicts",
+    "requiredByFeatures",
+    "goals",
+    "riskLevel",
+    "reversibility",
+    "snapshotRequired",
+    "snapshotCoverage",
+    "rebootRequired",
+    "verificationMethod",
+    "restorationMethod",
+    "evidenceBeforeAfter",
+    "sources"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+){2,}$",
+      "description": "Identificador único jerárquico en minúsculas (ej. system.services.spooler-start-type)."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "description": "Versión semántica (SemVer) de la ficha."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "lab-tested",
+        "stable",
+        "deprecated"
+      ],
+      "description": "Estado del ciclo de vida de la ficha en el catálogo."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "services",
+        "processes-background-startup",
+        "app-removal-bloatware",
+        "privacy-telemetry",
+        "cpu-processor-performance",
+        "memory-virtual-memory",
+        "gaming-latency",
+        "gpu-graphics-drivers",
+        "storage-disks",
+        "network-internet",
+        "windows-update",
+        "windows-security",
+        "registry",
+        "ui-experience",
+        "devices-optional-features",
+        "power-sleep-battery",
+        "repair-maintenance",
+        "installation-preparation"
+      ],
+      "description": "Categoría temática dentro de las 18 categorías definidas en CATEGORIES.md."
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "user",
+        "machine"
+      ],
+      "description": "Ámbito de impacto: usuario actual (HKCU/sesión) o máquina global (HKLM/servicios/sistema)."
+    },
+    "componentClass": {
+      "type": "string",
+      "enum": [
+        "Expendable",
+        "Optional",
+        "FeatureDependent",
+        "Critical",
+        "Undetermined"
+      ],
+      "description": "Clasificación curada del componente de Windows según ADR-0009."
+    },
+    "consentLevel": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "advanced",
+        "reinforced",
+        "expert"
+      ],
+      "description": "Nivel de consentimiento exigido según ADR-0013 y SAFETY_RULES.md."
+    },
+    "primitive": {
+      "type": "string",
+      "enum": [
+        "registry.setValue",
+        "registry.deleteValue",
+        "service.setStartType",
+        "service.stop",
+        "task.setEnabled",
+        "startup.setEnabled",
+        "power.setValue",
+        "network.setDns",
+        "network.flushDns",
+        "feature.setState",
+        "file.cleanup",
+        "repair.run",
+        "appx.remove"
+      ],
+      "description": "Primitiva principal declarada por la ficha dentro del catálogo cerrado de 13 primitivas (ADR-0012)."
+    },
+    "i18n": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "es",
+        "en"
+      ],
+      "properties": {
+        "es": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "en": {
+          "$ref": "#/$defs/localizedText"
+        }
+      },
+      "description": "Textos obligatorios en español (es) e inglés (en), incluyendo descripción técnica y motivo."
+    },
+    "windowsCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supportedReleases",
+        "editions",
+        "minBuild"
+      ],
+      "properties": {
+        "supportedReleases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "Win10-22H2",
+              "Win11-23H2",
+              "Win11-24H2",
+              "Win11-Future"
+            ]
+          }
+        },
+        "editions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "Home",
+              "Pro",
+              "Enterprise",
+              "Education",
+              "IoT-LTSC"
+            ]
+          }
+        },
+        "minBuild": {
+          "type": "integer",
+          "minimum": 19045,
+          "description": "Compilación mínima soportada (19045 para Win10 22H2; propuesta provisional 22621 para Win11 — PENDIENTE: fuente)."
+        },
+        "maxBuild": {
+          "type": "integer",
+          "minimum": 19045,
+          "description": "Compilación máxima soportada cuando aplique cota superior (PENDIENTE: fuente)."
+        }
+      },
+      "description": "Versiones, builds y ediciones de Windows compatibles."
+    },
+    "hardwareCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "architectures",
+        "formFactors",
+        "storageTypes"
+      ],
+      "properties": {
+        "architectures": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "x64",
+              "arm64"
+            ]
+          }
+        },
+        "formFactors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "desktop",
+              "laptop",
+              "handheld",
+              "workstation"
+            ]
+          }
+        },
+        "storageTypes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "any",
+              "nvme",
+              "sata-ssd",
+              "hdd"
+            ]
+          }
+        },
+        "minRamGb": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "description": "Requisitos de hardware compatibles para evaluar la ficha."
+    },
+    "changes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "description": "Lista de operaciones atómicas tipadas como unión discriminada por primitive (cubre las 13 primitivas de ADR-0012 sin cadenas ni rutas libres).",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/changeRegistrySetValue"
+          },
+          {
+            "$ref": "#/$defs/changeRegistryDeleteValue"
+          },
+          {
+            "$ref": "#/$defs/changeServiceSetStartType"
+          },
+          {
+            "$ref": "#/$defs/changeServiceStop"
+          },
+          {
+            "$ref": "#/$defs/changeTaskSetEnabled"
+          },
+          {
+            "$ref": "#/$defs/changeStartupSetEnabled"
+          },
+          {
+            "$ref": "#/$defs/changePowerSetValue"
+          },
+          {
+            "$ref": "#/$defs/changeNetworkSetDns"
+          },
+          {
+            "$ref": "#/$defs/changeNetworkFlushDns"
+          },
+          {
+            "$ref": "#/$defs/changeFeatureSetState"
+          },
+          {
+            "$ref": "#/$defs/changeFileCleanup"
+          },
+          {
+            "$ref": "#/$defs/changeRepairRun"
+          },
+          {
+            "$ref": "#/$defs/changeAppxRemove"
+          }
+        ]
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._-]+$"
+      },
+      "description": "Servicios, componentes o fichas de los que depende esta acción."
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._-]+$"
+      },
+      "description": "Acciones del catálogo o condiciones de software que entran en conflicto."
+    },
+    "requiredByFeatures": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "description": "Funciones de usuario que requieren este componente activo (ej. local-printing, bluetooth-audio)."
+    },
+    "goals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "gaming-latency",
+          "memory-footprint",
+          "boot-time",
+          "battery-life",
+          "privacy-hardening",
+          "security-hardening",
+          "storage-reclaim",
+          "system-stability",
+          "background-noise-reduction"
+        ]
+      },
+      "description": "Objetivos de intención de perfil con los que se alinea esta acción."
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Nivel de riesgo técnico evaluado."
+    },
+    "reversibility": {
+      "type": "string",
+      "enum": [
+        "Full",
+        "Partial",
+        "None"
+      ],
+      "description": "Grado de reversibilidad del cambio."
+    },
+    "snapshotRequired": {
+      "type": "boolean",
+      "description": "Indica si es obligatorio capturar snapshot propio antes de aplicar (obligatorio salvo reversibility None con consentimiento reforzado/experto)."
+    },
+    "snapshotCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "covered",
+        "notCovered"
+      ],
+      "properties": {
+        "covered": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "notCovered": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      },
+      "description": "Declaración explícita de qué cubre el snapshot propio de EVO y qué no cubre (ADR-0006)."
+    },
+    "rebootRequired": {
+      "type": "boolean",
+      "description": "Indica si la acción requiere una transacción con reinicio coordinada por Recovery Guard (ADR-0010)."
+    },
+    "verificationMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "readbackPrimitive",
+        "verifyAllChangesMatchProposed"
+      ],
+      "properties": {
+        "readbackPrimitive": {
+          "type": "string",
+          "enum": [
+            "registry.readValue",
+            "service.readState",
+            "task.readState",
+            "startup.readState",
+            "power.readValue",
+            "network.readDns",
+            "feature.readState",
+            "file.readQuota",
+            "repair.readExitCode",
+            "appx.readPresence"
+          ]
+        },
+        "verifyAllChangesMatchProposed": {
+          "type": "boolean",
+          "const": true
+        }
+      },
+      "description": "Método determinista de verificación posterior a la ejecución contrastando cada elemento de changes[]."
+    },
+    "restorationMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy",
+        "restorePrimitive",
+        "requiresSystemRestorePoint",
+        "requiresBootMediaConfirmation"
+      ],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "restore-from-evo-snapshot",
+            "reinstall-package",
+            "manual-guided-only"
+          ]
+        },
+        "restorePrimitive": {
+          "type": "string",
+          "enum": [
+            "registry.setValue",
+            "registry.deleteValue",
+            "service.setStartType",
+            "task.setEnabled",
+            "startup.setEnabled",
+            "power.setValue",
+            "network.setDns",
+            "feature.setState",
+            "none"
+          ]
+        },
+        "requiresSystemRestorePoint": {
+          "type": "boolean"
+        },
+        "requiresBootMediaConfirmation": {
+          "type": "boolean"
+        }
+      },
+      "description": "Método tipado de restauración a partir del snapshot propio (ADR-0006, ADR-0010)."
+    },
+    "evidenceBeforeAfter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiresLocalEvidenceToRecommend",
+        "localEvidenceProbeIds",
+        "metricsToMeasure",
+        "minSampleCount",
+        "expectedVerdictCriterion"
+      ],
+      "properties": {
+        "requiresLocalEvidenceToRecommend": {
+          "type": "boolean",
+          "const": true
+        },
+        "localEvidenceProbeIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^probe\\.[a-z0-9.-]+$"
+          }
+        },
+        "metricsToMeasure": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "service_working_set_bytes",
+              "process_cpu_time_ms",
+              "handle_count",
+              "thread_count",
+              "boot_duration_ms",
+              "dns_resolution_latency_ms",
+              "disk_free_bytes",
+              "power_idle_draw_mw",
+              "configuration_state_only"
+            ]
+          }
+        },
+        "minSampleCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "expectedVerdictCriterion": {
+          "type": "string",
+          "enum": [
+            "median_reduction_required",
+            "state_compliance_only"
+          ]
+        }
+      },
+      "description": "Evidencia local previa requerida y protocolo de medición antes/después con muestras individuales."
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "reference"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "microsoft-documentation",
+              "evo-lab-verification",
+              "pending-verification"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      },
+      "description": "Referencias documentales y registros de pruebas de laboratorio propias (ADR-0015)."
+    }
+  },
+  "$defs": {
+    "localizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "technicalDescription",
+        "rationale",
+        "impactIfDisabled",
+        "restorationNote"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 5
+        },
+        "technicalDescription": {
+          "type": "string",
+          "minLength": 15
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 15
+        },
+        "impactIfDisabled": {
+          "type": "string",
+          "minLength": 10
+        },
+        "restorationNote": {
+          "type": "string",
+          "minLength": 10
+        }
+      }
+    },
+    "changeRegistrySetValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "hive",
+        "subkey",
+        "valueName",
+        "valueType",
+        "expectedOriginalValue",
+        "proposedValue"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "registry.setValue"
+        },
+        "hive": {
+          "type": "string",
+          "enum": [
+            "HKCU",
+            "HKLM"
+          ]
+        },
+        "subkey": {
+          "type": "string",
+          "pattern": "^(SOFTWARE|SYSTEM|Control Panel|Environment)(\\\\[A-Za-z0-9_.-]+( [A-Za-z0-9_.-]+)*){1,16}$"
+        },
+        "valueName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{1,128}$"
+        },
+        "valueType": {
+          "type": "string",
+          "enum": [
+            "REG_DWORD",
+            "REG_QWORD",
+            "REG_SZ"
+          ]
+        },
+        "expectedOriginalValue": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "proposedValue": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        }
+      }
+    },
+    "changeRegistryDeleteValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "hive",
+        "subkey",
+        "valueName",
+        "valueType",
+        "expectedOriginalValue"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "registry.deleteValue"
+        },
+        "hive": {
+          "type": "string",
+          "enum": [
+            "HKCU",
+            "HKLM"
+          ]
+        },
+        "subkey": {
+          "type": "string",
+          "pattern": "^(SOFTWARE|SYSTEM|Control Panel|Environment)(\\\\[A-Za-z0-9_.-]+( [A-Za-z0-9_.-]+)*){1,16}$"
+        },
+        "valueName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{1,128}$"
+        },
+        "valueType": {
+          "type": "string",
+          "enum": [
+            "REG_DWORD",
+            "REG_QWORD",
+            "REG_SZ"
+          ]
+        },
+        "expectedOriginalValue": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        }
+      }
+    },
+    "changeServiceSetStartType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "serviceName",
+        "expectedOriginalStartType",
+        "proposedStartType"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "service.setStartType"
+        },
+        "serviceName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{2,64}$"
+        },
+        "expectedOriginalStartType": {
+          "type": "string",
+          "enum": [
+            "Automatic",
+            "AutomaticDelayedStart",
+            "Manual",
+            "Disabled"
+          ]
+        },
+        "proposedStartType": {
+          "type": "string",
+          "enum": [
+            "Automatic",
+            "AutomaticDelayedStart",
+            "Manual",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "changeServiceStop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "serviceName",
+        "expectedOriginalStatus",
+        "proposedStatus"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "service.stop"
+        },
+        "serviceName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{2,64}$"
+        },
+        "expectedOriginalStatus": {
+          "type": "string",
+          "enum": [
+            "Running"
+          ]
+        },
+        "proposedStatus": {
+          "type": "string",
+          "enum": [
+            "Stopped"
+          ]
+        }
+      }
+    },
+    "changeTaskSetEnabled": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "taskPath",
+        "taskName",
+        "expectedOriginalEnabled",
+        "proposedEnabled"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "task.setEnabled"
+        },
+        "taskPath": {
+          "type": "string",
+          "pattern": "^\\\\Microsoft\\\\Windows(\\\\[A-Za-z0-9_.-]+){1,8}$"
+        },
+        "taskName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{2,96}$"
+        },
+        "expectedOriginalEnabled": {
+          "type": "boolean"
+        },
+        "proposedEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "changeStartupSetEnabled": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "startupLocation",
+        "entryName",
+        "expectedOriginalEnabled",
+        "proposedEnabled"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "startup.setEnabled"
+        },
+        "startupLocation": {
+          "type": "string",
+          "enum": [
+            "HKCU_Run",
+            "HKLM_Run",
+            "StartupFolder_User",
+            "StartupFolder_Common"
+          ]
+        },
+        "entryName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{2,96}$"
+        },
+        "expectedOriginalEnabled": {
+          "type": "boolean"
+        },
+        "proposedEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "changePowerSetValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "schemeGuid",
+        "subgroupGuid",
+        "settingGuid",
+        "powerAcDc",
+        "expectedOriginalIndexValue",
+        "proposedIndexValue"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "power.setValue"
+        },
+        "schemeGuid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "subgroupGuid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "settingGuid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "powerAcDc": {
+          "type": "string",
+          "enum": [
+            "AC",
+            "DC",
+            "Both"
+          ]
+        },
+        "expectedOriginalIndexValue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "proposedIndexValue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      }
+    },
+    "changeNetworkSetDns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "adapterScope",
+        "addressFamily",
+        "primaryDns",
+        "secondaryDns"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "network.setDns"
+        },
+        "adapterScope": {
+          "type": "string",
+          "enum": [
+            "active-default-gateway-adapter",
+            "all-physical-ethernet",
+            "all-physical-wifi"
+          ]
+        },
+        "addressFamily": {
+          "type": "string",
+          "enum": [
+            "IPv4",
+            "IPv6"
+          ]
+        },
+        "primaryDns": {
+          "type": "string",
+          "pattern": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}|([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4})$"
+        },
+        "secondaryDns": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}|([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4})$"
+        }
+      }
+    },
+    "changeNetworkFlushDns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "operation"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "network.flushDns"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "flush-resolver-cache"
+          ]
+        }
+      }
+    },
+    "changeFeatureSetState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "featureName",
+        "expectedOriginalState",
+        "proposedState"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "feature.setState"
+        },
+        "featureName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{3,96}$"
+        },
+        "expectedOriginalState": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        },
+        "proposedState": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "changeFileCleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "cleanupTargetId",
+        "minAgeMinutes"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "file.cleanup"
+        },
+        "cleanupTargetId": {
+          "type": "string",
+          "enum": [
+            "user-temp-dir",
+            "system-temp-dir",
+            "windows-update-download-cache",
+            "directx-shader-cache",
+            "delivery-optimization-cache",
+            "thumbnail-cache"
+          ],
+          "description": "Identificador cerrado compilado en el motor; nunca una ruta de sistema de archivos libre."
+        },
+        "minAgeMinutes": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 525600
+        }
+      }
+    },
+    "changeRepairRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "repairOperation"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "repair.run"
+        },
+        "repairOperation": {
+          "type": "string",
+          "enum": [
+            "sfc-scannow",
+            "dism-check-health",
+            "dism-scan-health",
+            "dism-restore-health",
+            "dism-start-component-cleanup"
+          ],
+          "description": "Operación fija predefinida sin parámetros ni argumentos libres."
+        }
+      }
+    },
+    "changeAppxRemove": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primitive",
+        "packageName",
+        "removalScope"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "const": "appx.remove"
+        },
+        "packageName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{5,128}$"
+        },
+        "removalScope": {
+          "type": "string",
+          "enum": [
+            "current-user",
+            "provisioned-and-current-user"
+          ]
+        }
+      }
+    }
+  }
+}

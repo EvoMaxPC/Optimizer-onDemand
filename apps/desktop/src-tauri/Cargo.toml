@@ -1,0 +1,12 @@
+[package]
+name = "evo-desktop"
+version = "0.1.0"
+description = "EVO Desktop Shell (Etapa 2 / F1a - Tauri v2 + React sin motor)"
+edition = "2021"
+rust-version = "1.77.2"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }

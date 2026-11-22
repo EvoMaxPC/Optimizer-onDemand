@@ -1,0 +1,8 @@
+# CODEOWNERS - EVO OPTIMIZER (Etapa F0)
+# Reemplazar @OWNER-PENDIENTE por el identificador real de GitHub antes de abrir el repositorio a contribuciones.
+
+/docs/adr/       @OWNER-PENDIENTE
+/docs/security/  @OWNER-PENDIENTE
+/schemas/        @OWNER-PENDIENTE
+/catalog/        @OWNER-PENDIENTE
+/.github/        @OWNER-PENDIENTE

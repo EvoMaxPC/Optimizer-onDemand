@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://evo-optimizer.local/schemas/modules-manifest.schema.json",
+  "title": "EVO Modules Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modules"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "categories", "capabilities"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": ["gaming", "memory", "system", "network", "storage", "security"]
+          },
+          "categories": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 17
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": ["probes", "dossiers", "actions"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

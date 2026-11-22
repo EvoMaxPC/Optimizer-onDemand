@@ -1,0 +1,20 @@
+{
+  "name": "evo-optimizer-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EVO Windows 10/11 Optimizer - Monorepo Root (Etapa 2 / F1a)",
+  "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "check": "node tools/check-docs.mjs",
+    "check:docs": "node tools/check-docs.mjs",
+    "selftest:docs": "node tools/check-docs.selftest.mjs",
+    "dev:desktop": "pnpm --filter @evo/desktop dev",
+    "build:desktop": "pnpm --filter @evo/desktop build",
+    "test:desktop": "pnpm --filter @evo/desktop test",
+    "typecheck:desktop": "pnpm --filter @evo/desktop typecheck"
+  }
+}

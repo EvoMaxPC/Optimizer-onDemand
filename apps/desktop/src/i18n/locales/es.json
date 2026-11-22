@@ -1,0 +1,137 @@
+{
+  "app": {
+    "brand": "EVO",
+    "subtitle": "Shell de escritorio (Etapa 2 / F1a)",
+    "navAriaLabel": "Navegación principal"
+  },
+  "nav": {
+    "overview": "Resumen",
+    "history": "Historial",
+    "settings": "Ajustes",
+    "modules": "Módulos"
+  },
+  "statusBar": {
+    "engineDisconnected": "Motor no conectado",
+    "cannotModifyWindows": "Esta versión no puede modificar Windows",
+    "stageBadge": "Etapa 2 (F1a)"
+  },
+  "overview": {
+    "title": "Resumen arquitectónico del shell",
+    "mottoLabel": "Principio rector innegociable",
+    "motto": "Si no se puede explicar, medir, verificar y revertir, no se ejecuta.",
+    "noticeTitle": "Estado honesto de la Etapa 2 (F1a)",
+    "noticeBody": "El motor nativo aún no está implementado en esta compilación. Esta versión del shell no lee el estado del sistema operativo ni realiza cambios sobre Windows.",
+    "nextStagesNote": "Los manifiestos de módulos sin datos reales se incorporan en la Etapa 3 (F1b) y el motor de lectura en .NET se integra en la Etapa 4 (F2).",
+    "pillarsTitle": "Cinco pilares arquitectónicos",
+    "pillars": {
+      "explainable": {
+        "name": "Explicable",
+        "description": "Cada ficha del catálogo cerrado declara en lenguaje técnico claro su mecanismo exacto, su alcance y sus riesgos reales."
+      },
+      "measurable": {
+        "name": "Medible",
+        "description": "Toda acción registra evidencias objetivas previas y posteriores o declara explícitamente por qué el efecto es solo verificable de forma estructural."
+      },
+      "verifiable": {
+        "name": "Verificable",
+        "description": "El motor comprueba de forma independiente que el estado técnico esperado se mantiene tras la ejecución y detecta cualquier deriva posterior."
+      },
+      "reversible": {
+        "name": "Reversible",
+        "description": "Ninguna acción se ejecuta sin capturar antes el valor real previo en almacenamiento persistente con su método de restauración documentado."
+      },
+      "adaptive": {
+        "name": "Adaptativo",
+        "description": "Las recomendaciones dependen del perfil técnico real del equipo y de la intención declarada por el usuario, bajo la autoridad del Adaptive Core."
+      }
+    }
+  },
+  "history": {
+    "title": "Historial de acciones y evidencias",
+    "emptyTitle": "Almacenamiento de historial aún no disponible",
+    "emptyBody": "En la Etapa 2 (F1a) no existe base de datos local ni registro de ejecuciones. La persistencia en SQLite, las migraciones con versión y la cadena de evidencias verificable llegan en la Etapa 5 (F3).",
+    "guaranteeNote": "Cuando la Etapa 5 (F3) esté activa, esta vista mostrará exclusivamente registros reales leídos de SQLite con su estado previo, cambio ejecutado y verificación."
+  },
+  "settings": {
+    "title": "Ajustes del shell",
+    "languageSectionTitle": "Idioma de la interfaz",
+    "languageDescription": "Selecciona el idioma activo de la sesión actual. En la Etapa 2 (F1a) la preferencia se mantiene solo en memoria; la persistencia en SQLite llega en la Etapa 5 (F3).",
+    "languageEs": "Español (es)",
+    "languageEn": "Inglés (en)",
+    "systemInfoTitle": "Estado técnico de la compilación (solo lectura)",
+    "stageLabel": "Etapa actual",
+    "stageValue": "Etapa 2 (F1a) — Shell Tauri v2 + React sin motor",
+    "engineLabel": "Estado del motor",
+    "engineValue": "No implementado (previsto para Etapa 4 / F2)",
+    "storageLabel": "Almacenamiento local",
+    "storageValue": "En memoria durante la sesión (SQLite previsto para Etapa 5 / F3)",
+    "windowsAccessLabel": "Acceso a Windows",
+    "windowsAccessValue": "Ninguno: esta versión no lee ni modifica el sistema operativo"
+  },
+  "modules": {
+    "title": "Módulos",
+    "subtitle": "Catálogo estructural de módulos cargados desde el manifiesto.",
+    "unavailableBadge": "No disponible",
+    "unavailableDetailBadge": "No disponible: motor no conectado",
+    "motorDisconnected": "Motor no conectado",
+    "plannedLabel": "Planificado",
+    "categoriesLabel": "Categorías",
+    "capabilitiesLabel": "Capacidades",
+    "proposalPhrase": "EVO prepara y propone; con tu autorización, aplica.",
+    "unknownTitle": "Módulo desconocido",
+    "unknownDescription": "El identificador solicitado no existe en el manifiesto de módulos.",
+    "backToModules": "Volver a Módulos",
+    "manifestErrorTitle": "Error de manifiesto de módulos",
+    "manifestErrorDescription": "No se pudo validar el manifiesto de módulos en el arranque.",
+    "capabilities": {
+      "probes": "Sondas de lectura",
+      "dossiers": "Expedientes técnicos",
+      "actions": "Acciones autorizadas"
+    },
+    "items": {
+      "gaming": {
+        "name": "Gaming",
+        "description": "Latencia, programación de GPU y prioridades de juego."
+      },
+      "memory": {
+        "name": "Memory",
+        "description": "Gestión de memoria física, paginación y caché."
+      },
+      "system": {
+        "name": "System",
+        "description": "Servicios, energía, arranque, interfaz y mantenimiento del sistema."
+      },
+      "network": {
+        "name": "Network",
+        "description": "Pila de red, DNS y parámetros de adaptadores."
+      },
+      "storage": {
+        "name": "Storage",
+        "description": "Almacenamiento, TRIM, limpieza y políticas de disco."
+      },
+      "security": {
+        "name": "Security",
+        "description": "Telemetría, privacidad y superficie de seguridad."
+      }
+    },
+    "categories": {
+      "1": "Arranque y sesión",
+      "2": "Servicios del sistema",
+      "3": "Tareas programadas",
+      "4": "Privacidad y telemetría",
+      "5": "Gráficos y pantalla",
+      "6": "Memoria y paginación",
+      "7": "Latencia y temporizadores",
+      "8": "Prioridad de juegos",
+      "9": "Almacenamiento y discos",
+      "10": "Red y DNS",
+      "11": "Energía y CPU",
+      "12": "Seguridad y aislamiento",
+      "13": "Interfaz y escritorio",
+      "14": "Actualizaciones",
+      "15": "Aplicaciones UWP",
+      "16": "Entrada y periféricos",
+      "17": "Diagnóstico y mantenimiento"
+    }
+  }
+}
