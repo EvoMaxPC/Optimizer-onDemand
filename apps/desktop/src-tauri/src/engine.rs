@@ -172,3 +172,18 @@ pub fn diagnostics_collect() -> Result<Value, String> {
 pub fn plan_generate(profile: String) -> Result<Value, String> {
     spawn_and_call("plan.generate", Some(json!({ "profile": profile })))
 }
+
+#[tauri::command]
+pub fn cleanup_scan() -> Result<Value, String> {
+    spawn_and_call("cleanup.scan", None)
+}
+
+#[tauri::command]
+pub fn cleanup_quarantine(paths: Vec<String>) -> Result<Value, String> {
+    spawn_and_call("cleanup.quarantine", Some(json!({ "paths": paths })))
+}
+
+#[tauri::command]
+pub fn cleanup_restore(batch_id: String) -> Result<Value, String> {
+    spawn_and_call("cleanup.restore", Some(json!({ "batchId": batch_id })))
+}

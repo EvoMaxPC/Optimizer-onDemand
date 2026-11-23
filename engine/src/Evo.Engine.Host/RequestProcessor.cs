@@ -174,6 +174,35 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, AdaptiveCore.GeneratePlan(profile));
             }
 
+            if (method == "cleanup.scan")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { candidates = CleanupManager.ScanTemp() });
+            }
+
+            if (method == "cleanup.quarantine")
+            {
+                if (!hasParams || paramsEl.ValueKind != JsonValueKind.Object ||
+                    !paramsEl.TryGetProperty("paths", out var pathsEl) || pathsEl.ValueKind != JsonValueKind.Array)
+                {
+                    return hasId ? SerializeError(idValue, -32602, "Invalid params: paths array required") : null;
+                }
+                if (!hasId) return null;
+                var paths = pathsEl.EnumerateArray().Select(e => e.GetString()).Where(s => !string.IsNullOrEmpty(s)).Select(s => s!).ToList();
+                return SerializeResult(idValue, CleanupManager.Quarantine(paths));
+            }
+
+            if (method == "cleanup.restore")
+            {
+                if (!hasParams || paramsEl.ValueKind != JsonValueKind.Object ||
+                    !paramsEl.TryGetProperty("batchId", out var batchEl) || batchEl.ValueKind != JsonValueKind.String)
+                {
+                    return hasId ? SerializeError(idValue, -32602, "Invalid params: batchId required") : null;
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, CleanupManager.Restore(batchEl.GetString()!));
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

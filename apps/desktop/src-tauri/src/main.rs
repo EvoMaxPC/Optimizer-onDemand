@@ -13,7 +13,10 @@ fn main() {
             engine::action_rollback,
             engine::snapshot_list,
             engine::diagnostics_collect,
-            engine::plan_generate
+            engine::plan_generate,
+            engine::cleanup_scan,
+            engine::cleanup_quarantine,
+            engine::cleanup_restore
         ])
         .run(tauri::generate_context!())
         .expect("error while running EVO desktop shell");
