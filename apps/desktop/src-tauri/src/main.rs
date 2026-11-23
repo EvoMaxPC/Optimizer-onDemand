@@ -19,7 +19,8 @@ fn main() {
             engine::cleanup_restore,
             engine::lab_measure,
             engine::clean_sources,
-            engine::clean_analyze
+            engine::clean_analyze,
+            engine::ledger_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running EVO desktop shell");

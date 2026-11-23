@@ -78,6 +78,7 @@ public static class CleanupManager
         var manifest = new QuarantineManifest(batchId, DateTime.UtcNow.ToString("O"), entries);
         string manifestPath = System.IO.Path.Combine(batchDir, "manifest.json");
         File.WriteAllText(manifestPath, JsonSerializer.Serialize(manifest), Encoding.UTF8);
+        EvidenceLedger.Append("cleanup.quarantine", "quarantined", new { batchId, count = entries.Count });
         return manifest;
     }
 
@@ -113,6 +114,8 @@ public static class CleanupManager
             }
         }
 
-        return new { batchId, restored, total = manifest.Entries.Count };
+        var result = new { batchId, restored, total = manifest.Entries.Count };
+        EvidenceLedger.Append("cleanup.restore", "restored", result);
+        return result;
     }
 }

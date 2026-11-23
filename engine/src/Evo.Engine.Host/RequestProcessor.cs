@@ -228,6 +228,12 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, Clean.CleanAnalysisEngine.Analyze());
             }
 
+            if (method == "ledger.list")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { entries = EvidenceLedger.List() });
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

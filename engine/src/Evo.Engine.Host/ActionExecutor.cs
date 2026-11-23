@@ -101,12 +101,14 @@ public static class ActionExecutor
             ExecuteWindowsPrimitive(action.Primitive, action.Target, action.ValueType, action.ApplyValue);
         }
 
-        return new
+        var result = new
         {
             actionId = action.Id,
             status = "applied",
             snapshotPath
         };
+        EvidenceLedger.Append("action.apply", "applied", new { actionId = action.Id, target = action.Target });
+        return result;
     }
 
     public static object Rollback(string actionId)
@@ -131,11 +133,13 @@ public static class ActionExecutor
             ExecuteWindowsPrimitive(action.Primitive, action.Target, action.ValueType, restoreValue);
         }
 
-        return new
+        var result = new
         {
             actionId = action.Id,
             status = "rolled_back"
         };
+        EvidenceLedger.Append("action.rollback", "rolled_back", new { actionId = action.Id });
+        return result;
     }
 
     public static List<JsonElement> ListSnapshots()

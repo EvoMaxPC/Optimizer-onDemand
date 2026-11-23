@@ -202,3 +202,8 @@ pub fn clean_sources() -> Result<Value, String> {
 pub fn clean_analyze() -> Result<Value, String> {
     spawn_and_call("clean.analyze", None)
 }
+
+#[tauri::command]
+pub fn ledger_list() -> Result<Value, String> {
+    spawn_and_call("ledger.list", None)
+}
