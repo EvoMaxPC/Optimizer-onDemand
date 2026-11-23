@@ -258,6 +258,13 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, AdaptiveCore.ExecutePlan(profile));
             }
 
+            if (method == "clean.prioritize")
+            {
+                if (!hasId) return null;
+                var plan = Clean.CleanAnalysisEngine.Analyze();
+                return SerializeResult(idValue, new { prioritized = Clean.CleanupIntelligence.Prioritize(plan) });
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

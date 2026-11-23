@@ -222,3 +222,8 @@ pub fn storage_analytics() -> Result<Value, String> {
 pub fn plan_execute(profile: String) -> Result<Value, String> {
     spawn_and_call("plan.execute", Some(json!({ "profile": profile })))
 }
+
+#[tauri::command]
+pub fn clean_prioritize() -> Result<Value, String> {
+    spawn_and_call("clean.prioritize", None)
+}
