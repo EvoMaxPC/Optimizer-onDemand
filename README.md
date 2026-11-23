@@ -36,8 +36,10 @@ servidores externos; diagnóstico **solo lectura** por defecto.
 
 | Milestone | Módulos | Estado |
 |-----------|---------|--------|
-| V1.0 | M01, M02, M03, M04, M06, M07, M08, M09, M12, M14, M15, M16 | ✅ CI_RUNNER |
+| V1.0 | M01, M02, M03, M04, M05, M06, M07, M08, M09, M11, M12, M14, M15, M16 | ✅ CI_RUNNER |
 | V1.0 | M10 — Latency Lab (DPC/ISR/ETW) | ⏳ Diferido explícitamente |
+| V1.0 | M13 — Background Activity | ⏳ NO IMPLEMENTADO |
+| V1.0 | EVO.Desktop (dashboard WPF) | ⏳ NO VERIFICADO (work-in-progress) |
 
 **CI_RUNNER, no PC del usuario.** La verificación en PC del usuario sigue pendiente. Ver [`docs/Technical/V1_0_STATUS.md`](docs/Technical/V1_0_STATUS.md).
 
