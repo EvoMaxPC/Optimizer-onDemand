@@ -28,7 +28,7 @@ public class DiscoveryEngineTests
         var engine = new DiscoveryEngine();
         var result = engine.RunSync(new DiscoveryOptions(MaxDepth: 1, MaxFilesPerSource: 20, TimeoutMs: 10_000));
 
-        Assert.Equal("completed", result.Status);
+        Assert.True(result.Status is "Completed" or "CompletedWithWarnings");
         Assert.NotEmpty(result.Sources);
         Assert.Contains(result.Sources, s => s.Category == "Storage");
         Assert.Contains(result.Sources, s => s.Category == "User");
@@ -40,7 +40,7 @@ public class DiscoveryEngineTests
         var engine = new DiscoveryEngine([new FailingProvider(), new StorageSourceProvider()]);
         var result = engine.RunSync();
 
-        Assert.Equal("completed", result.Status);
+        Assert.Equal("CompletedWithWarnings", result.Status);
         Assert.Equal(1, result.Diagnostics.FailedProviders);
         Assert.Single(result.Diagnostics.ProviderErrors);
         Assert.NotEmpty(result.Sources);

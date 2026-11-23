@@ -1,10 +1,13 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::collections::VecDeque;
 use std::io::{BufRead, BufReader, Write};
 use std::path::PathBuf;
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::{Mutex, OnceLock};
+use std::sync::mpsc::{self, Receiver};
+use std::sync::{Arc, Mutex, OnceLock};
+use std::time::Duration;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -31,10 +34,14 @@ pub struct SystemOsInfoResult {
     pub machine_name: String,
 }
 
+const CALL_TIMEOUT_SECS: u64 = 30;
+const STDERR_TAIL_LIMIT: usize = 50;
+
 struct PersistentHost {
     child: Child,
     stdin: ChildStdin,
-    stdout: BufReader<ChildStdout>,
+    stdout_rx: Receiver<Result<String, String>>,
+    stderr_tail: Arc<Mutex<VecDeque<String>>>,
 }
 
 impl PersistentHost {
@@ -76,11 +83,41 @@ impl PersistentHost {
             .take()
             .ok_or_else(|| "Host stdout was not captured".to_string())?;
 
+        let (tx, stdout_rx) = mpsc::channel();
+        std::thread::spawn(move || {
+            let mut reader = BufReader::new(stdout);
+            loop {
+                let mut line = String::new();
+                match reader.read_line(&mut line) {
+                    Ok(0) => {
+                        let _ = tx.send(Err("Evo.Engine.Host closed stdout".to_string()));
+                        break;
+                    }
+                    Ok(_) => {
+                        if tx.send(Ok(line)).is_err() {
+                            break;
+                        }
+                    }
+                    Err(e) => {
+                        let _ = tx.send(Err(format!("Failed to read host stdout: {e}")));
+                        break;
+                    }
+                }
+            }
+        });
+
+        let stderr_tail = Arc::new(Mutex::new(VecDeque::with_capacity(STDERR_TAIL_LIMIT)));
         if let Some(stderr) = child.stderr.take() {
+            let tail_ref = Arc::clone(&stderr_tail);
             std::thread::spawn(move || {
                 let reader = BufReader::new(stderr);
-                for _ in reader.lines() {
-                    // Drain stderr continuously to prevent pipe buffer deadlock
+                for line in reader.lines().map_while(Result::ok) {
+                    if let Ok(mut buf) = tail_ref.lock() {
+                        if buf.len() >= STDERR_TAIL_LIMIT {
+                            buf.pop_front();
+                        }
+                        buf.push_back(line);
+                    }
                 }
             });
         }
@@ -88,12 +125,22 @@ impl PersistentHost {
         Ok(Self {
             child,
             stdin,
-            stdout: BufReader::new(stdout),
+            stdout_rx,
+            stderr_tail,
         })
     }
 
     fn is_alive(&mut self) -> bool {
         matches!(self.child.try_wait(), Ok(None))
+    }
+
+    fn format_stderr_tail(&self) -> String {
+        if let Ok(buf) = self.stderr_tail.lock() {
+            if !buf.is_empty() {
+                return format!(" | stderr: {}", buf.iter().cloned().collect::<Vec<_>>().join(" ; "));
+            }
+        }
+        String::new()
     }
 
     fn call(&mut self, id: u64, method: &str, params: Option<Value>) -> Result<Value, String> {
@@ -114,18 +161,21 @@ impl PersistentHost {
             .flush()
             .map_err(|e| format!("Failed to flush host stdin: {e}"))?;
 
-        let mut response_line = String::new();
-        let bytes = self
-            .stdout
-            .read_line(&mut response_line)
-            .map_err(|e| format!("Failed to read host stdout: {e}"))?;
-
-        if bytes == 0 {
-            return Err("Evo.Engine.Host closed stdout without a response".to_string());
-        }
+        let response_line = self
+            .stdout_rx
+            .recv_timeout(Duration::from_secs(CALL_TIMEOUT_SECS))
+            .map_err(|_| format!("Timeout ({CALL_TIMEOUT_SECS}s) waiting for host response to {method}{}", self.format_stderr_tail()))?
+            .map_err(|e| format!("{e}{}", self.format_stderr_tail()))?;
 
         let resp: Value = serde_json::from_str(response_line.trim())
             .map_err(|e| format!("Invalid JSON-RPC response from host: {e}"))?;
+
+        if resp.get("id") != Some(&json!(id)) {
+            return Err(format!(
+                "JSON-RPC id mismatch: expected {id}, got {:?}",
+                resp.get("id")
+            ));
+        }
 
         if let Some(err) = resp.get("error") {
             return Err(format!("Engine returned JSON-RPC error: {err}"));
@@ -178,20 +228,12 @@ fn call_persistent_host(method: &str, params: Option<Value>) -> Result<Value, St
 
     let id = NEXT_REQUEST_ID.fetch_add(1, Ordering::Relaxed);
     let host = guard.as_mut().ok_or_else(|| "Host unavailable".to_string())?;
-    match host.call(id, method, params.clone()) {
-        Ok(val) => Ok(val),
-        Err(first_err) => {
-            // Attempt one automatic restart if the host crashed mid-call
-            if !host.is_alive() {
-                *guard = Some(PersistentHost::spawn()?);
-                let retry_id = NEXT_REQUEST_ID.fetch_add(1, Ordering::Relaxed);
-                if let Some(restarted) = guard.as_mut() {
-                    return restarted.call(retry_id, method, params);
-                }
-            }
-            Err(first_err)
-        }
+    let res = host.call(id, method, params);
+    if res.is_err() && !host.is_alive() {
+        // Reset dead host so next call spawns a fresh one; never auto-retry non-idempotent operations
+        *guard = None;
     }
+    res
 }
 
 pub fn shutdown_host() {

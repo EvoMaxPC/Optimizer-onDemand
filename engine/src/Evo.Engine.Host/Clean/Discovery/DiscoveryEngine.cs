@@ -50,6 +50,7 @@ public sealed class DiscoveryEngine
 
             string runId = $"disc-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
             _activeRunId = runId;
+            _lastResult = null;
             _state = DiscoveryLifecycleState.Queued;
             _currentProvider = null;
             _cancelReason = null;
@@ -57,7 +58,23 @@ public sealed class DiscoveryEngine
             _partialSources.Clear();
             _partialErrors.Clear();
 
-            _ = Task.Run(() => RunSync(options, CancellationToken.None, runId));
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    RunSync(options, CancellationToken.None, runId);
+                }
+                catch (Exception ex)
+                {
+                    lock (_gate)
+                    {
+                        _partialErrors.Add($"Unhandled discovery error: {ex.Message}");
+                        _state = DiscoveryLifecycleState.Failed;
+                        _currentProvider = null;
+                        _cts = null;
+                    }
+                }
+            });
             return new { runId, status = _state.ToString(), alreadyRunning = false };
         }
     }

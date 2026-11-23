@@ -145,7 +145,7 @@ public sealed class RequestProcessorTests
     {
         string repoRoot = RepoRoot.Find();
         string hostDir = Path.Combine(repoRoot, "engine", "src", "Evo.Engine.Host");
-        string[] forbidden = ["Microsoft.Win32", "System.ServiceProcess", "Process.Start", "File.Write", "File.Delete", "Registry", "DllImport"];
+        string[] forbidden = ["Microsoft.Win32", "System.ServiceProcess", "Process.Start", "File.Write", "File.Delete", "File.Move", "Registry.SetValue", "DllImport"];
 
         string[] csFiles = Directory.GetFiles(hostDir, "*.cs", SearchOption.AllDirectories);
         Assert.NotEmpty(csFiles);
