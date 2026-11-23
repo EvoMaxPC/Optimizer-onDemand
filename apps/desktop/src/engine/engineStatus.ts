@@ -115,3 +115,49 @@ export async function listSnapshots(): Promise<SnapshotEntry[]> {
   const res = await invoke<{ snapshots: SnapshotEntry[] }>('snapshot_list');
   return res.snapshots ?? [];
 }
+
+export interface DriveSummary {
+  name: string;
+  format: string;
+  totalBytes: number;
+  freeBytes: number;
+}
+
+export interface SystemDiagnostics {
+  osDescription: string;
+  osVersion: string;
+  architecture: string;
+  processorCount: number;
+  totalAvailableMemoryBytes: number;
+  drives: DriveSummary[];
+  appliedActionIds: string[];
+  collectedAtUtc: string;
+}
+
+export async function collectDiagnostics(): Promise<SystemDiagnostics | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<SystemDiagnostics>('diagnostics_collect');
+}
+
+export interface PlannedOperation {
+  actionId: string;
+  moduleId: string;
+  title: string;
+  riskLevel: string;
+  reason: string;
+  alreadyApplied: boolean;
+}
+
+export interface OperationPlan {
+  profile: string;
+  totalRecommended: number;
+  operations: PlannedOperation[];
+  generatedAtUtc: string;
+}
+
+export async function generatePlan(profile: 'gaming' | 'balanced' | 'minimal'): Promise<OperationPlan | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<OperationPlan>('plan_generate', { profile });
+}

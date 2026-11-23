@@ -156,6 +156,24 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, new { snapshots = ActionExecutor.ListSnapshots() });
             }
 
+            if (method == "diagnostics.collect")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, DiagnosticsCollector.Collect());
+            }
+
+            if (method == "plan.generate")
+            {
+                string profile = "balanced";
+                if (hasParams && paramsEl.ValueKind == JsonValueKind.Object &&
+                    paramsEl.TryGetProperty("profile", out var profEl) && profEl.ValueKind == JsonValueKind.String)
+                {
+                    profile = profEl.GetString() ?? "balanced";
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, AdaptiveCore.GeneratePlan(profile));
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

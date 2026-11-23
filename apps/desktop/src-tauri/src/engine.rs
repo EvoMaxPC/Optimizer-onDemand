@@ -162,3 +162,13 @@ pub fn action_rollback(action_id: String) -> Result<Value, String> {
 pub fn snapshot_list() -> Result<Value, String> {
     spawn_and_call("snapshot.list", None)
 }
+
+#[tauri::command]
+pub fn diagnostics_collect() -> Result<Value, String> {
+    spawn_and_call("diagnostics.collect", None)
+}
+
+#[tauri::command]
+pub fn plan_generate(profile: String) -> Result<Value, String> {
+    spawn_and_call("plan.generate", Some(json!({ "profile": profile })))
+}
