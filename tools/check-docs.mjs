@@ -253,6 +253,7 @@ function checkStructureAndPackageJson() {
     if (ALLOWED_STAGE2_FILES.has(f)) return false;
     if (f.startsWith('apps/desktop/')) return false;
     if (f.startsWith('engine/')) return false;
+    if (f === 'catalog/actions.json') return false;
     if (/^license(\..+)?$/i.test(path.basename(f))) return false;
     return true;
   });

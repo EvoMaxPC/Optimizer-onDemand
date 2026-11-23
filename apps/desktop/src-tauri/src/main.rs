@@ -7,7 +7,11 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             engine::engine_hello,
             engine::engine_version,
-            engine::system_os_info
+            engine::system_os_info,
+            engine::catalog_list,
+            engine::action_apply,
+            engine::action_rollback,
+            engine::snapshot_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running EVO desktop shell");

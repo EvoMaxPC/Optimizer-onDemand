@@ -1,0 +1,103 @@
+{
+  "version": "1.0.0",
+  "actions": [
+    {
+      "id": "gaming.gameMode.enable",
+      "moduleId": "gaming",
+      "category": 1,
+      "title": "Activar Game Mode de Windows",
+      "description": "Habilita AllowAutoGameMode en HKCU\\Software\\Microsoft\\GameBar para priorizar recursos en juegos.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKCU\\Software\\Microsoft\\GameBar\\AllowAutoGameMode",
+      "valueType": "DWORD",
+      "applyValue": 1,
+      "defaultValue": 0
+    },
+    {
+      "id": "gaming.fso.disable",
+      "moduleId": "gaming",
+      "category": 1,
+      "title": "Desactivar Game DVR en segundo plano",
+      "description": "Desactiva AppCaptureEnabled en HKCU\\System\\GameConfigStore para reducir overhead de captura.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKCU\\System\\GameConfigStore\\GameDVR_Enabled",
+      "valueType": "DWORD",
+      "applyValue": 0,
+      "defaultValue": 1
+    },
+    {
+      "id": "memory.sysmain.disable",
+      "moduleId": "memory",
+      "category": 5,
+      "title": "Deshabilitar SysMain (Superfetch)",
+      "description": "Cambia el inicio del servicio SysMain a Disabled para evitar precarga agresiva en SSD.",
+      "riskLevel": "medium",
+      "reversibility": "full",
+      "primitive": "service.setStartType",
+      "target": "SysMain",
+      "valueType": "STRING",
+      "applyValue": "Disabled",
+      "defaultValue": "Automatic"
+    },
+    {
+      "id": "storage.hibernation.disable",
+      "moduleId": "storage",
+      "category": 8,
+      "title": "Desactivar Hibernación (hiberfil.sys)",
+      "description": "Desactiva HibernateEnabled en HKLM\\SYSTEM\\CurrentControlSet\\Control\\Power para liberar espacio en disco.",
+      "riskLevel": "medium",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Power\\HibernateEnabled",
+      "valueType": "DWORD",
+      "applyValue": 0,
+      "defaultValue": 1
+    },
+    {
+      "id": "network.nagle.disable",
+      "moduleId": "network",
+      "category": 10,
+      "title": "Desactivar Network Throttling Index",
+      "description": "Establece NetworkThrottlingIndex en 0xFFFFFFFF para evitar limitación multimedia en red.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\NetworkThrottlingIndex",
+      "valueType": "DWORD",
+      "applyValue": -1,
+      "defaultValue": 10
+    },
+    {
+      "id": "privacy.telemetry.minimal",
+      "moduleId": "privacy",
+      "category": 13,
+      "title": "Reducir telemetría de diagnóstico",
+      "description": "Establece AllowTelemetry=0 en HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\\AllowTelemetry",
+      "valueType": "DWORD",
+      "applyValue": 0,
+      "defaultValue": 1
+    },
+    {
+      "id": "appearance.transparency.disable",
+      "moduleId": "appearance",
+      "category": 16,
+      "title": "Desactivar efectos de transparencia",
+      "description": "Establece EnableTransparency=0 en HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\\EnableTransparency",
+      "valueType": "DWORD",
+      "applyValue": 0,
+      "defaultValue": 1
+    }
+  ]
+}
