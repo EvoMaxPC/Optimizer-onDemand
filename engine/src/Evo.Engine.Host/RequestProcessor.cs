@@ -216,6 +216,18 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, LabBenchmark.Measure(samples));
             }
 
+            if (method == "clean.sources")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { sources = Clean.CleanSourceRegistry.GetSources() });
+            }
+
+            if (method == "clean.analyze")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.CleanAnalysisEngine.Analyze());
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

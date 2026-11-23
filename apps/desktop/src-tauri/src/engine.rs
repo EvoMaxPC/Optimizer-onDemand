@@ -192,3 +192,13 @@ pub fn cleanup_restore(batch_id: String) -> Result<Value, String> {
 pub fn lab_measure(samples: Option<u32>) -> Result<Value, String> {
     spawn_and_call("lab.measure", Some(json!({ "samples": samples.unwrap_or(7) })))
 }
+
+#[tauri::command]
+pub fn clean_sources() -> Result<Value, String> {
+    spawn_and_call("clean.sources", None)
+}
+
+#[tauri::command]
+pub fn clean_analyze() -> Result<Value, String> {
+    spawn_and_call("clean.analyze", None)
+}
