@@ -62,3 +62,40 @@ export async function probeEngine(): Promise<EngineSnapshot> {
     };
   }
 }
+
+export interface CatalogAction {
+  id: string;
+  moduleId: string;
+  category: number;
+  title: string;
+  description: string;
+  riskLevel: string;
+  reversibility: string;
+  primitive: string;
+  target: string;
+}
+
+export async function listCatalogActions(moduleId: string): Promise<CatalogAction[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    return [];
+  }
+  const res = await invoke<{ actions: CatalogAction[] }>('catalog_list');
+  return (res.actions ?? []).filter((a) => a.moduleId === moduleId);
+}
+
+export async function applyAction(actionId: string): Promise<{ actionId: string; status: string }> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    throw new Error('Tauri runtime not available');
+  }
+  return invoke<{ actionId: string; status: string }>('action_apply', { actionId });
+}
+
+export async function rollbackAction(actionId: string): Promise<{ actionId: string; status: string }> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    throw new Error('Tauri runtime not available');
+  }
+  return invoke<{ actionId: string; status: string }>('action_rollback', { actionId });
+}

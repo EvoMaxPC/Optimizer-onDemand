@@ -142,3 +142,18 @@ pub fn system_os_info() -> Result<SystemOsInfoResult, String> {
     let result = spawn_and_call("system.osInfo", None)?;
     serde_json::from_value(result).map_err(|e| format!("Invalid system.osInfo result: {e}"))
 }
+
+#[tauri::command]
+pub fn catalog_list() -> Result<Value, String> {
+    spawn_and_call("catalog.list", None)
+}
+
+#[tauri::command]
+pub fn action_apply(action_id: String) -> Result<Value, String> {
+    spawn_and_call("action.apply", Some(json!({ "actionId": action_id })))
+}
+
+#[tauri::command]
+pub fn action_rollback(action_id: String) -> Result<Value, String> {
+    spawn_and_call("action.rollback", Some(json!({ "actionId": action_id })))
+}
