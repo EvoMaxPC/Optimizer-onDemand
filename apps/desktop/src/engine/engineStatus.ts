@@ -99,3 +99,19 @@ export async function rollbackAction(actionId: string): Promise<{ actionId: stri
   }
   return invoke<{ actionId: string; status: string }>('action_rollback', { actionId });
 }
+
+export interface SnapshotEntry {
+  actionId: string;
+  target: string;
+  primitive: string;
+  capturedAtUtc: string;
+}
+
+export async function listSnapshots(): Promise<SnapshotEntry[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    return [];
+  }
+  const res = await invoke<{ snapshots: SnapshotEntry[] }>('snapshot_list');
+  return res.snapshots ?? [];
+}

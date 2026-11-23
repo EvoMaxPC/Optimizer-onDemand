@@ -114,6 +114,33 @@ public static class ActionExecutor
         };
     }
 
+    public static List<JsonElement> ListSnapshots()
+    {
+        string snapshotDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "EvoOptimizer",
+            "snapshots");
+        if (!Directory.Exists(snapshotDir))
+        {
+            return new List<JsonElement>();
+        }
+
+        var list = new List<JsonElement>();
+        foreach (string file in Directory.GetFiles(snapshotDir, "*.json"))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(File.ReadAllText(file, Encoding.UTF8));
+                list.Add(doc.RootElement.Clone());
+            }
+            catch
+            {
+                // Ignore malformed snapshot files
+            }
+        }
+        return list;
+    }
+
     private static void ExecuteWindowsPrimitive(string primitive, string target, string valueType, JsonElement value)
     {
         if (primitive == "registry.setValue")

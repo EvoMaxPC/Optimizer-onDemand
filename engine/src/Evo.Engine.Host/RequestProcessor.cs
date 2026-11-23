@@ -150,6 +150,12 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, ActionExecutor.Rollback(actionIdEl.GetString()!));
             }
 
+            if (method == "snapshot.list")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { snapshots = ActionExecutor.ListSnapshots() });
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

@@ -157,3 +157,8 @@ pub fn action_apply(action_id: String) -> Result<Value, String> {
 pub fn action_rollback(action_id: String) -> Result<Value, String> {
     spawn_and_call("action.rollback", Some(json!({ "actionId": action_id })))
 }
+
+#[tauri::command]
+pub fn snapshot_list() -> Result<Value, String> {
+    spawn_and_call("snapshot.list", None)
+}
