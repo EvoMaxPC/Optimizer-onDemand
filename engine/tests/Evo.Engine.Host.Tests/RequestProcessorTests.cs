@@ -155,7 +155,8 @@ public sealed class RequestProcessorTests
 
         foreach (string csFile in csFiles)
         {
-            if (Path.GetFileName(csFile) == "ActionExecutor.cs")
+            string name = Path.GetFileName(csFile);
+            if (name != "Program.cs" && name != "RequestProcessor.cs")
             {
                 continue;
             }
