@@ -187,3 +187,8 @@ pub fn cleanup_quarantine(paths: Vec<String>) -> Result<Value, String> {
 pub fn cleanup_restore(batch_id: String) -> Result<Value, String> {
     spawn_and_call("cleanup.restore", Some(json!({ "batchId": batch_id })))
 }
+
+#[tauri::command]
+pub fn lab_measure(samples: Option<u32>) -> Result<Value, String> {
+    spawn_and_call("lab.measure", Some(json!({ "samples": samples.unwrap_or(7) })))
+}

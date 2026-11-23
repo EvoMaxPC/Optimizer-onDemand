@@ -16,7 +16,8 @@ fn main() {
             engine::plan_generate,
             engine::cleanup_scan,
             engine::cleanup_quarantine,
-            engine::cleanup_restore
+            engine::cleanup_restore,
+            engine::lab_measure
         ])
         .run(tauri::generate_context!())
         .expect("error while running EVO desktop shell");

@@ -203,6 +203,19 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, CleanupManager.Restore(batchEl.GetString()!));
             }
 
+            if (method == "lab.measure")
+            {
+                int samples = 7;
+                if (hasParams && paramsEl.ValueKind == JsonValueKind.Object &&
+                    paramsEl.TryGetProperty("samples", out var sampEl) && sampEl.ValueKind == JsonValueKind.Number &&
+                    sampEl.TryGetInt32(out int parsed))
+                {
+                    samples = parsed;
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, LabBenchmark.Measure(samples));
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

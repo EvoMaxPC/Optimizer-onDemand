@@ -161,3 +161,50 @@ export async function generatePlan(profile: 'gaming' | 'balanced' | 'minimal'): 
   if (!invoke) return null;
   return invoke<OperationPlan>('plan_generate', { profile });
 }
+
+export interface CleanupCandidate {
+  path: string;
+  sizeBytes: number;
+  lastWriteUtc: string;
+}
+
+export interface QuarantineBatch {
+  batchId: string;
+  createdAtUtc: string;
+  entries: Array<{ originalPath: string; quarantinedPath: string; sizeBytes: number }>;
+}
+
+export async function scanCleanup(): Promise<CleanupCandidate[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return [];
+  const res = await invoke<{ candidates: CleanupCandidate[] }>('cleanup_scan');
+  return res.candidates ?? [];
+}
+
+export async function quarantineFiles(paths: string[]): Promise<QuarantineBatch> {
+  const invoke = getTauriInvoke();
+  if (!invoke) throw new Error('Tauri runtime not available');
+  return invoke<QuarantineBatch>('cleanup_quarantine', { paths });
+}
+
+export async function restoreQuarantine(batchId: string): Promise<{ batchId: string; restored: number; total: number }> {
+  const invoke = getTauriInvoke();
+  if (!invoke) throw new Error('Tauri runtime not available');
+  return invoke<{ batchId: string; restored: number; total: number }>('cleanup_restore', { batchId });
+}
+
+export interface LabMeasurement {
+  samples: number;
+  medianMs: number;
+  minMs: number;
+  maxMs: number;
+  stdDevMs: number;
+  workingSetBytes: number;
+  measuredAtUtc: string;
+}
+
+export async function measureLab(samples = 7): Promise<LabMeasurement | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<LabMeasurement>('lab_measure', { samples });
+}

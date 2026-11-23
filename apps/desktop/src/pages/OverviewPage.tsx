@@ -4,6 +4,8 @@ import {
   applyAction,
   collectDiagnostics,
   generatePlan,
+  measureLab,
+  type LabMeasurement,
   type OperationPlan,
   type SystemDiagnostics,
 } from '../engine/engineStatus';
@@ -22,6 +24,8 @@ export function OverviewPage() {
   const [profile, setProfile] = useState<'gaming' | 'balanced' | 'minimal'>('balanced');
   const [plan, setPlan] = useState<OperationPlan | null>(null);
   const [opStatus, setOpStatus] = useState<Record<string, string>>({});
+  const [labBefore, setLabBefore] = useState<LabMeasurement | null>(null);
+  const [labAfter, setLabAfter] = useState<LabMeasurement | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -148,7 +152,29 @@ export function OverviewPage() {
             </ul>
           </div>
         )}
-      </section>
+          </section>
+
+          <section className="card" aria-label="Laboratorio EVO">
+            <h2>Laboratorio EVO — Medición A/B</h2>
+            <div>
+              <button type="button" onClick={async () => setLabBefore(await measureLab(7))}>
+                Medir Antes (A)
+              </button>{' '}
+              <button type="button" onClick={async () => setLabAfter(await measureLab(7))}>
+                Medir Después (B)
+              </button>
+            </div>
+            {labBefore && (
+              <p>
+                <strong>Antes (A):</strong> mediana {labBefore.medianMs} ms (mín {labBefore.minMs} / máx {labBefore.maxMs}, σ {labBefore.stdDevMs})
+              </p>
+            )}
+            {labAfter && (
+              <p>
+                <strong>Después (B):</strong> mediana {labAfter.medianMs} ms (mín {labAfter.minMs} / máx {labAfter.maxMs}, σ {labAfter.stdDevMs})
+              </p>
+            )}
+          </section>
         </>
       )}
     </section>
