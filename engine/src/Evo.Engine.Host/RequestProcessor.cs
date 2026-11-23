@@ -265,6 +265,30 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, new { prioritized = Clean.CleanupIntelligence.Prioritize(plan) });
             }
 
+            if (method == "discovery.start")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.RunSync());
+            }
+
+            if (method == "discovery.status")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.GetStatus());
+            }
+
+            if (method == "discovery.cancel")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { cancelled = Clean.Discovery.DiscoveryEngine.Shared.Cancel() });
+            }
+
+            if (method == "discovery.results")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.GetResults() ?? (object)new { status = "idle" });
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

@@ -227,3 +227,23 @@ pub fn plan_execute(profile: String) -> Result<Value, String> {
 pub fn clean_prioritize() -> Result<Value, String> {
     spawn_and_call("clean.prioritize", None)
 }
+
+#[tauri::command]
+pub fn discovery_start() -> Result<Value, String> {
+    spawn_and_call("discovery.start", None)
+}
+
+#[tauri::command]
+pub fn discovery_status() -> Result<Value, String> {
+    spawn_and_call("discovery.status", None)
+}
+
+#[tauri::command]
+pub fn discovery_cancel() -> Result<Value, String> {
+    spawn_and_call("discovery.cancel", None)
+}
+
+#[tauri::command]
+pub fn discovery_results() -> Result<Value, String> {
+    spawn_and_call("discovery.results", None)
+}
