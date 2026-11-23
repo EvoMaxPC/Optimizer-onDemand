@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Evo.Engine.Host;
 
@@ -20,6 +21,8 @@ public sealed record CatalogAction(
 
 public static class ActionExecutor
 {
+    private const int ProcessTimeoutMs = 15_000;
+
     public static string FindCatalogPath()
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);
@@ -59,26 +62,35 @@ public static class ActionExecutor
         return actions;
     }
 
-    public static object Apply(string actionId)
+    private static string GetSnapshotPath(string actionId)
     {
-        var action = LoadCatalog().FirstOrDefault(a => a.Id == actionId)
-            ?? throw new KeyNotFoundException($"Unknown action: {actionId}");
-
         string snapshotDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "EvoOptimizer",
             "snapshots");
         Directory.CreateDirectory(snapshotDir);
-        string snapshotPath = Path.Combine(snapshotDir, $"{action.Id}.json");
+        return Path.Combine(snapshotDir, $"{actionId}.json");
+    }
+
+    public static object Apply(string actionId)
+    {
+        var action = LoadCatalog().FirstOrDefault(a => a.Id == actionId)
+            ?? throw new KeyNotFoundException($"Unknown action: {actionId}");
+
+        string snapshotPath = GetSnapshotPath(action.Id);
 
         if (!File.Exists(snapshotPath))
         {
+            object previousValue = OperatingSystem.IsWindows()
+                ? ReadCurrentWindowsValue(action.Primitive, action.Target, action.ValueType, action.DefaultValue)
+                : action.DefaultValue;
+
             var snap = new
             {
                 actionId = action.Id,
                 target = action.Target,
                 primitive = action.Primitive,
-                previousValue = action.DefaultValue,
+                previousValue,
                 capturedAtUtc = DateTime.UtcNow.ToString("O")
             };
             File.WriteAllText(snapshotPath, JsonSerializer.Serialize(snap), Encoding.UTF8);
@@ -102,9 +114,21 @@ public static class ActionExecutor
         var action = LoadCatalog().FirstOrDefault(a => a.Id == actionId)
             ?? throw new KeyNotFoundException($"Unknown action: {actionId}");
 
+        string snapshotPath = GetSnapshotPath(action.Id);
+        JsonElement restoreValue = action.DefaultValue;
+
+        if (File.Exists(snapshotPath))
+        {
+            using var doc = JsonDocument.Parse(File.ReadAllText(snapshotPath, Encoding.UTF8));
+            if (doc.RootElement.TryGetProperty("previousValue", out var prev))
+            {
+                restoreValue = prev.Clone();
+            }
+        }
+
         if (OperatingSystem.IsWindows())
         {
-            ExecuteWindowsPrimitive(action.Primitive, action.Target, action.ValueType, action.DefaultValue);
+            ExecuteWindowsPrimitive(action.Primitive, action.Target, action.ValueType, restoreValue);
         }
 
         return new
@@ -141,6 +165,53 @@ public static class ActionExecutor
         return list;
     }
 
+    private static object ReadCurrentWindowsValue(string primitive, string target, string valueType, JsonElement fallback)
+    {
+        try
+        {
+            if (primitive == "registry.setValue")
+            {
+                int lastSlash = target.LastIndexOf('\\');
+                if (lastSlash <= 0) return fallback;
+                string key = target[..lastSlash];
+                string valueName = target[(lastSlash + 1)..];
+                var (exitCode, stdout, _) = RunProcess("reg.exe", $"query \"{key}\" /v \"{valueName}\"", throwOnError: false);
+                if (exitCode != 0) return fallback;
+
+                var match = Regex.Match(stdout, $@"{Regex.Escape(valueName)}\s+REG_\w+\s+(\S+)");
+                if (!match.Success) return fallback;
+                string raw = match.Groups[1].Value;
+                if (valueType == "DWORD")
+                {
+                    if (raw.StartsWith("0x", StringComparison.OrdinalIgnoreCase) &&
+                        int.TryParse(raw[2..], System.Globalization.NumberStyles.HexNumber, null, out int hexVal))
+                    {
+                        return hexVal;
+                    }
+                    if (int.TryParse(raw, out int decVal))
+                    {
+                        return decVal;
+                    }
+                }
+                return raw;
+            }
+
+            if (primitive == "service.setStartType")
+            {
+                var (exitCode, stdout, _) = RunProcess("sc.exe", $"qc \"{target}\"", throwOnError: false);
+                if (exitCode != 0) return fallback;
+                if (stdout.Contains("DISABLED", StringComparison.OrdinalIgnoreCase)) return "Disabled";
+                if (stdout.Contains("DEMAND_START", StringComparison.OrdinalIgnoreCase)) return "Manual";
+                if (stdout.Contains("AUTO_START", StringComparison.OrdinalIgnoreCase)) return "Automatic";
+            }
+        }
+        catch
+        {
+            // Fallback to catalog default if query fails
+        }
+        return fallback;
+    }
+
     private static void ExecuteWindowsPrimitive(string primitive, string target, string valueType, JsonElement value)
     {
         if (primitive == "registry.setValue")
@@ -173,7 +244,7 @@ public static class ActionExecutor
         }
     }
 
-    private static void RunProcess(string fileName, string arguments)
+    private static (int ExitCode, string Stdout, string Stderr) RunProcess(string fileName, string arguments, bool throwOnError = true)
     {
         using var proc = Process.Start(new ProcessStartInfo
         {
@@ -185,11 +256,23 @@ public static class ActionExecutor
             RedirectStandardError = true
         }) ?? throw new InvalidOperationException($"Failed to start {fileName}");
 
-        proc.WaitForExit();
-        if (proc.ExitCode != 0)
+        var stdoutTask = proc.StandardOutput.ReadToEndAsync();
+        var stderrTask = proc.StandardError.ReadToEndAsync();
+
+        if (!proc.WaitForExit(ProcessTimeoutMs))
         {
-            string err = proc.StandardError.ReadToEnd();
-            throw new InvalidOperationException($"{fileName} exited with {proc.ExitCode}: {err}");
+            try { proc.Kill(entireProcessTree: true); } catch { }
+            throw new TimeoutException($"{fileName} timed out after {ProcessTimeoutMs}ms");
         }
+
+        string stdout = stdoutTask.GetAwaiter().GetResult();
+        string stderr = stderrTask.GetAwaiter().GetResult();
+
+        if (throwOnError && proc.ExitCode != 0)
+        {
+            throw new InvalidOperationException($"{fileName} exited with {proc.ExitCode}: {stderr}");
+        }
+
+        return (proc.ExitCode, stdout, stderr);
     }
 }

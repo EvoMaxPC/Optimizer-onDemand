@@ -20,7 +20,7 @@
       "moduleId": "gaming",
       "category": 1,
       "title": "Desactivar Game DVR en segundo plano",
-      "description": "Desactiva AppCaptureEnabled en HKCU\\System\\GameConfigStore para reducir overhead de captura.",
+      "description": "Desactiva GameDVR_Enabled en HKCU\\System\\GameConfigStore para reducir overhead de captura.",
       "riskLevel": "low",
       "reversibility": "full",
       "primitive": "registry.setValue",
@@ -58,7 +58,7 @@
       "defaultValue": 1
     },
     {
-      "id": "network.nagle.disable",
+      "id": "network.throttling.disable",
       "moduleId": "network",
       "category": 10,
       "title": "Desactivar Network Throttling Index",
