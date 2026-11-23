@@ -4,6 +4,8 @@ import { useI18n } from '../i18n';
 import {
   applyAction,
   engineStatus,
+  findDuplicates,
+  getStorageAnalytics,
   listCatalogActions,
   quarantineFiles,
   restoreQuarantine,
@@ -11,6 +13,8 @@ import {
   scanCleanup,
   type CatalogAction,
   type CleanupCandidate,
+  type DuplicateGroup,
+  type StorageAnalyticsReport,
 } from '../engine/engineStatus';
 import { loadModulesManifest } from '../modules/loader';
 
@@ -26,6 +30,8 @@ export function ModuleDetailPage({ manifestOverride }: ModuleDetailPageProps) {
   const [cleanupItems, setCleanupItems] = useState<CleanupCandidate[]>([]);
   const [lastBatchId, setLastBatchId] = useState<string | null>(null);
   const [cleanupMsg, setCleanupMsg] = useState<string | null>(null);
+  const [duplicates, setDuplicates] = useState<DuplicateGroup[]>([]);
+  const [analytics, setAnalytics] = useState<StorageAnalyticsReport | null>(null);
 
   useEffect(() => {
     if (!moduleId) return;
@@ -181,6 +187,36 @@ export function ModuleDetailPage({ manifestOverride }: ModuleDetailPageProps) {
               )}
             </div>
             {cleanupMsg && <p>{cleanupMsg}</p>}
+            <div>
+              <button
+                type="button"
+                onClick={async () => {
+                  const report = await getStorageAnalytics();
+                  setAnalytics(report);
+                }}
+              >
+                Analizar almacenamiento
+              </button>{' '}
+              <button
+                type="button"
+                onClick={async () => {
+                  const groups = await findDuplicates();
+                  setDuplicates(groups);
+                }}
+              >
+                Buscar duplicados
+              </button>
+            </div>
+            {analytics && (
+              <div>
+                <p>Volúmenes: {analytics.volumes.length} · Archivos grandes en Temp: {analytics.largestTempFiles.length}</p>
+              </div>
+            )}
+            {duplicates.length > 0 && (
+              <div>
+                <p>Grupos de duplicados exactos (SHA-256): {duplicates.length}</p>
+              </div>
+            )}
           </div>
         )}
 
