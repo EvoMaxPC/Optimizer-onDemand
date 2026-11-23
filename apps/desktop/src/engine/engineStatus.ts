@@ -208,3 +208,17 @@ export async function measureLab(samples = 7): Promise<LabMeasurement | null> {
   if (!invoke) return null;
   return invoke<LabMeasurement>('lab_measure', { samples });
 }
+
+export interface LedgerEntry {
+  id: string;
+  timestampUtc: string;
+  operation: string;
+  status: string;
+}
+
+export async function listLedger(): Promise<LedgerEntry[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return [];
+  const res = await invoke<{ entries: LedgerEntry[] }>('ledger_list');
+  return res.entries ?? [];
+}

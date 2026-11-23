@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../i18n';
-import { listSnapshots, rollbackAction, type SnapshotEntry } from '../engine/engineStatus';
+import { listLedger, listSnapshots, rollbackAction, type LedgerEntry, type SnapshotEntry } from '../engine/engineStatus';
 
 export function HistoryPage() {
   const { t } = useI18n();
   const [snapshots, setSnapshots] = useState<SnapshotEntry[]>([]);
+  const [ledger, setLedger] = useState<LedgerEntry[]>([]);
   const [rollbackStatus, setRollbackStatus] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -15,6 +16,13 @@ export function HistoryPage() {
       })
       .catch(() => {
         if (active) setSnapshots([]);
+      });
+    listLedger()
+      .then((items) => {
+        if (active) setLedger(items);
+      })
+      .catch(() => {
+        if (active) setLedger([]);
       });
     return () => {
       active = false;
@@ -63,6 +71,20 @@ export function HistoryPage() {
                     <span className="badge">{rollbackStatus[snap.actionId]}</span>
                   )}
                 </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {ledger.length > 0 && (
+        <div className="card">
+          <h2>Libro de evidencias (Evidence Ledger)</h2>
+          <ul>
+            {ledger.map((entry) => (
+              <li key={entry.id}>
+                <strong>{entry.operation}</strong> — <span className="badge">{entry.status}</span>{' '}
+                <small>{entry.timestampUtc}</small>
               </li>
             ))}
           </ul>

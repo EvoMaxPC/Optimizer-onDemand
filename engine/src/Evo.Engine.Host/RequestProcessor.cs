@@ -234,6 +234,18 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, new { entries = EvidenceLedger.List() });
             }
 
+            if (method == "clean.duplicates")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { groups = Clean.DuplicateIntelligence.FindDuplicatesInTemp() });
+            }
+
+            if (method == "storage.analytics")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.StorageAnalytics.Analyze());
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

@@ -207,3 +207,13 @@ pub fn clean_analyze() -> Result<Value, String> {
 pub fn ledger_list() -> Result<Value, String> {
     spawn_and_call("ledger.list", None)
 }
+
+#[tauri::command]
+pub fn clean_duplicates() -> Result<Value, String> {
+    spawn_and_call("clean.duplicates", None)
+}
+
+#[tauri::command]
+pub fn storage_analytics() -> Result<Value, String> {
+    spawn_and_call("storage.analytics", None)
+}
