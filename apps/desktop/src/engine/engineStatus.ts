@@ -222,3 +222,34 @@ export async function listLedger(): Promise<LedgerEntry[]> {
   const res = await invoke<{ entries: LedgerEntry[] }>('ledger_list');
   return res.entries ?? [];
 }
+
+export async function executePlan(profile: 'gaming' | 'balanced' | 'minimal'): Promise<{ profile: string; applied: string[]; skipped: string[] } | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<{ profile: string; applied: string[]; skipped: string[] }>('plan_execute', { profile });
+}
+
+export interface DuplicateGroup {
+  sha256: string;
+  sizeBytes: number;
+  paths: string[];
+}
+
+export async function findDuplicates(): Promise<DuplicateGroup[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return [];
+  const res = await invoke<{ groups: DuplicateGroup[] }>('clean_duplicates');
+  return res.groups ?? [];
+}
+
+export interface StorageAnalyticsReport {
+  volumes: DriveSummary[];
+  largestTempFiles: Array<{ path: string; sizeBytes: number; lastWriteUtc: string }>;
+  analyzedAtUtc: string;
+}
+
+export async function getStorageAnalytics(): Promise<StorageAnalyticsReport | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<StorageAnalyticsReport>('storage_analytics');
+}

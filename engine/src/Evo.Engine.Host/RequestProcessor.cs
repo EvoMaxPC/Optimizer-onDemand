@@ -246,6 +246,18 @@ public sealed class RequestProcessor
                 return SerializeResult(idValue, Clean.StorageAnalytics.Analyze());
             }
 
+            if (method == "plan.execute")
+            {
+                string profile = "balanced";
+                if (hasParams && paramsEl.ValueKind == JsonValueKind.Object &&
+                    paramsEl.TryGetProperty("profile", out var profEl) && profEl.ValueKind == JsonValueKind.String)
+                {
+                    profile = profEl.GetString() ?? "balanced";
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, AdaptiveCore.ExecutePlan(profile));
+            }
+
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;
         }
     }

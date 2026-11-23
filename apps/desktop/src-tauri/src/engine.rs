@@ -217,3 +217,8 @@ pub fn clean_duplicates() -> Result<Value, String> {
 pub fn storage_analytics() -> Result<Value, String> {
     spawn_and_call("storage.analytics", None)
 }
+
+#[tauri::command]
+pub fn plan_execute(profile: String) -> Result<Value, String> {
+    spawn_and_call("plan.execute", Some(json!({ "profile": profile })))
+}

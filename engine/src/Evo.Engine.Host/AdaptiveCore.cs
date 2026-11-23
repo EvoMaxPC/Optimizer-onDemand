@@ -60,4 +60,25 @@ public static class AdaptiveCore
             ops,
             DateTime.UtcNow.ToString("O"));
     }
+
+    public static object ExecutePlan(string profile)
+    {
+        var plan = GeneratePlan(profile);
+        var applied = new List<string>();
+        var skipped = new List<string>();
+
+        foreach (var op in plan.Operations)
+        {
+            if (op.AlreadyApplied)
+            {
+                skipped.Add(op.ActionId);
+                continue;
+            }
+            ActionExecutor.Apply(op.ActionId);
+            applied.Add(op.ActionId);
+        }
+
+        EvidenceLedger.Append("plan.execute", "completed", new { profile = plan.Profile, appliedCount = applied.Count });
+        return new { profile = plan.Profile, applied, skipped };
+    }
 }

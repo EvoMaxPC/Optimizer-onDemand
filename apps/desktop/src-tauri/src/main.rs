@@ -22,7 +22,8 @@ fn main() {
             engine::clean_analyze,
             engine::ledger_list,
             engine::clean_duplicates,
-            engine::storage_analytics
+            engine::storage_analytics,
+            engine::plan_execute
         ])
         .run(tauri::generate_context!())
         .expect("error while running EVO desktop shell");
