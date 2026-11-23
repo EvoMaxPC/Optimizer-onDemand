@@ -3,6 +3,7 @@ import { useI18n } from '../i18n';
 import {
   applyAction,
   collectDiagnostics,
+  executePlan,
   generatePlan,
   measureLab,
   type LabMeasurement,
@@ -127,7 +128,20 @@ export function OverviewPage() {
           </select>{' '}
           <button type="button" onClick={handleGeneratePlan}>
             Generar plan
-          </button>
+          </button>{' '}
+          {plan && plan.totalRecommended > 0 && (
+            <button
+              type="button"
+              onClick={async () => {
+                const res = await executePlan(profile);
+                if (res) {
+                  setPlan(await generatePlan(profile));
+                }
+              }}
+            >
+              Ejecutar plan completo
+            </button>
+          )}
         </div>
 
         {plan && (
