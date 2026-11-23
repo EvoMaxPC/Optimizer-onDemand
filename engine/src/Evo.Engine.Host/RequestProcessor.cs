@@ -82,7 +82,8 @@ public sealed class RequestProcessor
                 {
                     protocolVersion = 1,
                     engineName = "Evo.Engine.Host",
-                    readOnly = true,
+                    readOnly = false,
+                    capabilities = new[] { "diagnostics", "discovery", "execution", "cleanup", "optimization", "rollback" },
                     methods = SupportedMethods
                 });
             }

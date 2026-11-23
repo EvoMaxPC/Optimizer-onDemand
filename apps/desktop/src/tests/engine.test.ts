@@ -23,7 +23,7 @@ describe('engineStatus / probeEngine', () => {
     (window as unknown as { __TAURI_INTERNALS__: { invoke: (cmd: string) => Promise<unknown> } }).__TAURI_INTERNALS__ = {
       invoke: async (cmd: string) => {
         if (cmd === 'engine_hello') {
-          return { protocolVersion: 1, engineName: 'Evo.Engine.Host', readOnly: true, methods: ['engine.hello', 'engine.version', 'system.osInfo'] };
+          return { protocolVersion: 1, engineName: 'Evo.Engine.Host', readOnly: false, methods: ['engine.hello', 'engine.version', 'system.osInfo'] };
         }
         if (cmd === 'engine_version') {
           return { engineVersion: '0.1.0', runtime: '.NET 10.0.15' };

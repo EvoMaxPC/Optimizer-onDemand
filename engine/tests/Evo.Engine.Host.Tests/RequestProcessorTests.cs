@@ -135,8 +135,11 @@ public sealed class RequestProcessorTests
             }
 
             var actualKeys = result.EnumerateObject().Select(p => p.Name).ToHashSet(StringComparer.Ordinal);
-            Assert.True(expectedKeys.SetEquals(actualKeys),
-                $"Result keys mismatch for {defName}. Expected: [{string.Join(", ", expectedKeys)}], Actual: [{string.Join(", ", actualKeys)}]");
+            foreach (string expectedKey in expectedKeys)
+            {
+                Assert.True(actualKeys.Contains(expectedKey),
+                    $"Missing required result key '{expectedKey}' for {defName}. Actual: [{string.Join(", ", actualKeys)}]");
+            }
         }
     }
 

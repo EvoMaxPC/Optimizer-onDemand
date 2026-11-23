@@ -229,8 +229,8 @@ fn call_persistent_host(method: &str, params: Option<Value>) -> Result<Value, St
     let id = NEXT_REQUEST_ID.fetch_add(1, Ordering::Relaxed);
     let host = guard.as_mut().ok_or_else(|| "Host unavailable".to_string())?;
     let res = host.call(id, method, params);
-    if res.is_err() && !host.is_alive() {
-        // Reset dead host so next call spawns a fresh one; never auto-retry non-idempotent operations
+    if res.is_err() {
+        // Reset host on any error or timeout so late responses can never contaminate subsequent calls
         *guard = None;
     }
     res
