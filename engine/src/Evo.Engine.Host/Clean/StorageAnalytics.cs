@@ -30,10 +30,11 @@ public static class StorageAnalytics
                     try { return new FileInfo(p); }
                     catch { return null; }
                 })
-                .Where(fi => fi is not null && fi.Exists)
-                .OrderByDescending(fi => fi!.Length)
+                .OfType<FileInfo>()
+                .Where(fi => fi.Exists)
+                .OrderByDescending(fi => fi.Length)
                 .Take(topN)
-                .Select(fi => new LargeFileEntry(fi!.FullName, fi.Length, fi.LastWriteTimeUtc.ToString("O")))
+                .Select(fi => new LargeFileEntry(fi.FullName, fi.Length, fi.LastWriteTimeUtc.ToString("O")))
                 .ToList();
         }
 
