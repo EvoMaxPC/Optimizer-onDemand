@@ -253,3 +253,75 @@ export async function getStorageAnalytics(): Promise<StorageAnalyticsReport | nu
   if (!invoke) return null;
   return invoke<StorageAnalyticsReport>('storage_analytics');
 }
+
+export interface DiscoveredSource {
+  id: string;
+  name: string;
+  category: string;
+  subcategory: string;
+  path: string;
+  sourceType: string;
+  relatedComponent: string;
+  exists: boolean;
+  accessible: boolean;
+  fileCount: number | null;
+  totalBytes: number | null;
+  state: string;
+  preliminaryRisk: string;
+  inclusionReason: string;
+  restrictions: string[];
+  errors: string[];
+}
+
+export interface DiscoveryStatus {
+  runId: string | null;
+  status: string;
+  progress: number;
+  currentProvider: string | null;
+  processedSources: number;
+  totalProviders: number;
+  errors: string[];
+  cancelReason: string | null;
+  hasResult: boolean;
+}
+
+export interface DiscoveryResult {
+  runId: string;
+  status: string;
+  sources: DiscoveredSource[];
+  diagnostics: {
+    startedAtUtc: string;
+    completedAtUtc: string | null;
+    cancelled: boolean;
+    totalProviders: number;
+    failedProviders: number;
+    totalSources: number;
+    accessibleSources: number;
+    inaccessibleSources: number;
+    providerErrors: string[];
+  };
+}
+
+export async function startDiscovery(): Promise<{ runId: string; status: string } | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<{ runId: string; status: string }>('discovery_start');
+}
+
+export async function getDiscoveryStatus(): Promise<DiscoveryStatus | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<DiscoveryStatus>('discovery_status');
+}
+
+export async function cancelDiscovery(): Promise<{ cancelled: boolean } | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<{ cancelled: boolean }>('discovery_cancel');
+}
+
+export async function getDiscoveryResults(): Promise<DiscoveryResult | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<DiscoveryResult>('discovery_results');
+}

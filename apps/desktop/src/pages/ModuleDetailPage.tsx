@@ -3,16 +3,22 @@ import { Link, useParams } from 'react-router-dom';
 import { useI18n } from '../i18n';
 import {
   applyAction,
+  cancelDiscovery,
   engineStatus,
   findDuplicates,
+  getDiscoveryResults,
+  getDiscoveryStatus,
   getStorageAnalytics,
   listCatalogActions,
   quarantineFiles,
   restoreQuarantine,
   rollbackAction,
   scanCleanup,
+  startDiscovery,
   type CatalogAction,
   type CleanupCandidate,
+  type DiscoveryResult,
+  type DiscoveryStatus,
   type DuplicateGroup,
   type StorageAnalyticsReport,
 } from '../engine/engineStatus';
@@ -32,6 +38,8 @@ export function ModuleDetailPage({ manifestOverride }: ModuleDetailPageProps) {
   const [cleanupMsg, setCleanupMsg] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<DuplicateGroup[]>([]);
   const [analytics, setAnalytics] = useState<StorageAnalyticsReport | null>(null);
+  const [discStatus, setDiscStatus] = useState<DiscoveryStatus | null>(null);
+  const [discResult, setDiscResult] = useState<DiscoveryResult | null>(null);
 
   useEffect(() => {
     if (!moduleId) return;
@@ -216,6 +224,60 @@ export function ModuleDetailPage({ manifestOverride }: ModuleDetailPageProps) {
               <div>
                 <p>Grupos de duplicados exactos (SHA-256): {duplicates.length}</p>
               </div>
+            )}
+            <hr />
+            <h3>Discovery Engine (Solo lectura)</h3>
+            <div>
+              <button
+                type="button"
+                onClick={async () => {
+                  await startDiscovery();
+                  const st = await getDiscoveryStatus();
+                  setDiscStatus(st);
+                  if (st && (st.status === 'Completed' || st.status === 'CompletedWithWarnings' || st.status === 'Cancelled')) {
+                    setDiscResult(await getDiscoveryResults());
+                  }
+                }}
+              >
+                Iniciar descubrimiento
+              </button>{' '}
+              <button
+                type="button"
+                onClick={async () => {
+                  const st = await getDiscoveryStatus();
+                  setDiscStatus(st);
+                  if (st?.hasResult) {
+                    setDiscResult(await getDiscoveryResults());
+                  }
+                }}
+              >
+                Actualizar estado
+              </button>{' '}
+              <button
+                type="button"
+                onClick={async () => {
+                  await cancelDiscovery();
+                  setDiscStatus(await getDiscoveryStatus());
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+            {discStatus && (
+              <p>
+                Estado: <strong>{discStatus.status}</strong> ({discStatus.progress}%) · Proveedor:{' '}
+                {discStatus.currentProvider ?? '—'} · Fuentes: {discStatus.processedSources}
+              </p>
+            )}
+            {discResult && discResult.sources && (
+              <ul>
+                {discResult.sources.slice(0, 12).map((s) => (
+                  <li key={s.id}>
+                    <strong>{s.name}</strong> [{s.category}/{s.state}] — {s.path}{' '}
+                    {s.totalBytes !== null ? `(${Math.round(s.totalBytes / 1024)} KB)` : ''}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         )}

@@ -268,7 +268,7 @@ public sealed class RequestProcessor
             if (method == "discovery.start")
             {
                 if (!hasId) return null;
-                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.RunSync());
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.StartBackground());
             }
 
             if (method == "discovery.status")

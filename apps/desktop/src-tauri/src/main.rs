@@ -30,6 +30,11 @@ fn main() {
             engine::discovery_cancel,
             engine::discovery_results
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running EVO desktop shell");
+        .build(tauri::generate_context!())
+        .expect("error while building EVO desktop shell")
+        .run(|_app_handle, event| {
+            if matches!(event, tauri::RunEvent::Exit) {
+                engine::shutdown_host();
+            }
+        });
 }
