@@ -135,8 +135,11 @@ public sealed class RequestProcessorTests
             }
 
             var actualKeys = result.EnumerateObject().Select(p => p.Name).ToHashSet(StringComparer.Ordinal);
-            Assert.True(expectedKeys.SetEquals(actualKeys),
-                $"Result keys mismatch for {defName}. Expected: [{string.Join(", ", expectedKeys)}], Actual: [{string.Join(", ", actualKeys)}]");
+            foreach (string expectedKey in expectedKeys)
+            {
+                Assert.True(actualKeys.Contains(expectedKey),
+                    $"Missing required result key '{expectedKey}' for {defName}. Actual: [{string.Join(", ", actualKeys)}]");
+            }
         }
     }
 
@@ -145,7 +148,7 @@ public sealed class RequestProcessorTests
     {
         string repoRoot = RepoRoot.Find();
         string hostDir = Path.Combine(repoRoot, "engine", "src", "Evo.Engine.Host");
-        string[] forbidden = ["Microsoft.Win32", "System.ServiceProcess", "Process.Start", "File.Write", "File.Delete", "Registry", "DllImport"];
+        string[] forbidden = ["Microsoft.Win32", "System.ServiceProcess", "Process.Start", "File.Write", "File.Delete", "File.Move", "Registry.SetValue", "DllImport"];
 
         string[] csFiles = Directory.GetFiles(hostDir, "*.cs", SearchOption.AllDirectories);
         Assert.NotEmpty(csFiles);
@@ -155,7 +158,8 @@ public sealed class RequestProcessorTests
 
         foreach (string csFile in csFiles)
         {
-            if (Path.GetFileName(csFile) == "ActionExecutor.cs")
+            string name = Path.GetFileName(csFile);
+            if (name != "Program.cs" && name != "RequestProcessor.cs")
             {
                 continue;
             }

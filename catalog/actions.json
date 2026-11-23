@@ -20,7 +20,7 @@
       "moduleId": "gaming",
       "category": 1,
       "title": "Desactivar Game DVR en segundo plano",
-      "description": "Desactiva AppCaptureEnabled en HKCU\\System\\GameConfigStore para reducir overhead de captura.",
+      "description": "Desactiva GameDVR_Enabled en HKCU\\System\\GameConfigStore para reducir overhead de captura.",
       "riskLevel": "low",
       "reversibility": "full",
       "primitive": "registry.setValue",
@@ -58,7 +58,7 @@
       "defaultValue": 1
     },
     {
-      "id": "network.nagle.disable",
+      "id": "network.throttling.disable",
       "moduleId": "network",
       "category": 10,
       "title": "Desactivar Network Throttling Index",
@@ -97,6 +97,48 @@
       "target": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\\EnableTransparency",
       "valueType": "DWORD",
       "applyValue": 0,
+      "defaultValue": 1
+    },
+    {
+      "id": "appearance.animations.reduce",
+      "moduleId": "appearance",
+      "category": 16,
+      "title": "Desactivar animaciones de menú",
+      "description": "Establece MenuShowDelay=0 en HKCU\\Control Panel\\Desktop para respuesta instantánea de menús.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKCU\\Control Panel\\Desktop\\MenuShowDelay",
+      "valueType": "STRING",
+      "applyValue": "0",
+      "defaultValue": "400"
+    },
+    {
+      "id": "privacy.advertisingId.disable",
+      "moduleId": "privacy",
+      "category": 13,
+      "title": "Desactivar ID de publicidad de Windows",
+      "description": "Establece Enabled=0 en HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo.",
+      "riskLevel": "low",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo\\Enabled",
+      "valueType": "DWORD",
+      "applyValue": 0,
+      "defaultValue": 1
+    },
+    {
+      "id": "gaming.hags.enable",
+      "moduleId": "gaming",
+      "category": 2,
+      "title": "Activar Hardware-Accelerated GPU Scheduling",
+      "description": "Establece HwSchMode=2 en HKLM\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers (requiere reinicio).",
+      "riskLevel": "medium",
+      "reversibility": "full",
+      "primitive": "registry.setValue",
+      "target": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers\\HwSchMode",
+      "valueType": "DWORD",
+      "applyValue": 2,
       "defaultValue": 1
     }
   ]

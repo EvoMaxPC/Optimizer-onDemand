@@ -82,7 +82,8 @@ public sealed class RequestProcessor
                 {
                     protocolVersion = 1,
                     engineName = "Evo.Engine.Host",
-                    readOnly = true,
+                    readOnly = false,
+                    capabilities = new[] { "diagnostics", "discovery", "execution", "cleanup", "optimization", "rollback" },
                     methods = SupportedMethods
                 });
             }
@@ -148,6 +149,145 @@ public sealed class RequestProcessor
                 }
                 if (!hasId) return null;
                 return SerializeResult(idValue, ActionExecutor.Rollback(actionIdEl.GetString()!));
+            }
+
+            if (method == "snapshot.list")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { snapshots = ActionExecutor.ListSnapshots() });
+            }
+
+            if (method == "diagnostics.collect")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, DiagnosticsCollector.Collect());
+            }
+
+            if (method == "plan.generate")
+            {
+                string profile = "balanced";
+                if (hasParams && paramsEl.ValueKind == JsonValueKind.Object &&
+                    paramsEl.TryGetProperty("profile", out var profEl) && profEl.ValueKind == JsonValueKind.String)
+                {
+                    profile = profEl.GetString() ?? "balanced";
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, AdaptiveCore.GeneratePlan(profile));
+            }
+
+            if (method == "cleanup.scan")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { candidates = CleanupManager.ScanTemp() });
+            }
+
+            if (method == "cleanup.quarantine")
+            {
+                if (!hasParams || paramsEl.ValueKind != JsonValueKind.Object ||
+                    !paramsEl.TryGetProperty("paths", out var pathsEl) || pathsEl.ValueKind != JsonValueKind.Array)
+                {
+                    return hasId ? SerializeError(idValue, -32602, "Invalid params: paths array required") : null;
+                }
+                if (!hasId) return null;
+                var paths = pathsEl.EnumerateArray().Select(e => e.GetString()).Where(s => !string.IsNullOrEmpty(s)).Select(s => s!).ToList();
+                return SerializeResult(idValue, CleanupManager.Quarantine(paths));
+            }
+
+            if (method == "cleanup.restore")
+            {
+                if (!hasParams || paramsEl.ValueKind != JsonValueKind.Object ||
+                    !paramsEl.TryGetProperty("batchId", out var batchEl) || batchEl.ValueKind != JsonValueKind.String)
+                {
+                    return hasId ? SerializeError(idValue, -32602, "Invalid params: batchId required") : null;
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, CleanupManager.Restore(batchEl.GetString()!));
+            }
+
+            if (method == "lab.measure")
+            {
+                int samples = 7;
+                if (hasParams && paramsEl.ValueKind == JsonValueKind.Object &&
+                    paramsEl.TryGetProperty("samples", out var sampEl) && sampEl.ValueKind == JsonValueKind.Number &&
+                    sampEl.TryGetInt32(out int parsed))
+                {
+                    samples = parsed;
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, LabBenchmark.Measure(samples));
+            }
+
+            if (method == "clean.sources")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { sources = Clean.CleanSourceRegistry.GetSources() });
+            }
+
+            if (method == "clean.analyze")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.CleanAnalysisEngine.Analyze());
+            }
+
+            if (method == "ledger.list")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { entries = EvidenceLedger.List() });
+            }
+
+            if (method == "clean.duplicates")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { groups = Clean.DuplicateIntelligence.FindDuplicatesInTemp() });
+            }
+
+            if (method == "storage.analytics")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.StorageAnalytics.Analyze());
+            }
+
+            if (method == "plan.execute")
+            {
+                string profile = "balanced";
+                if (hasParams && paramsEl.ValueKind == JsonValueKind.Object &&
+                    paramsEl.TryGetProperty("profile", out var profEl) && profEl.ValueKind == JsonValueKind.String)
+                {
+                    profile = profEl.GetString() ?? "balanced";
+                }
+                if (!hasId) return null;
+                return SerializeResult(idValue, AdaptiveCore.ExecutePlan(profile));
+            }
+
+            if (method == "clean.prioritize")
+            {
+                if (!hasId) return null;
+                var plan = Clean.CleanAnalysisEngine.Analyze();
+                return SerializeResult(idValue, new { prioritized = Clean.CleanupIntelligence.Prioritize(plan) });
+            }
+
+            if (method == "discovery.start")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.StartBackground());
+            }
+
+            if (method == "discovery.status")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.GetStatus());
+            }
+
+            if (method == "discovery.cancel")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, new { cancelled = Clean.Discovery.DiscoveryEngine.Shared.Cancel() });
+            }
+
+            if (method == "discovery.results")
+            {
+                if (!hasId) return null;
+                return SerializeResult(idValue, Clean.Discovery.DiscoveryEngine.Shared.GetResults() ?? (object)new { status = "idle" });
             }
 
             return hasId ? SerializeError(idValue, -32601, "Method not found") : null;

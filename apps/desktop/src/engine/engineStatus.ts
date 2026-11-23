@@ -99,3 +99,229 @@ export async function rollbackAction(actionId: string): Promise<{ actionId: stri
   }
   return invoke<{ actionId: string; status: string }>('action_rollback', { actionId });
 }
+
+export interface SnapshotEntry {
+  actionId: string;
+  target: string;
+  primitive: string;
+  capturedAtUtc: string;
+}
+
+export async function listSnapshots(): Promise<SnapshotEntry[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) {
+    return [];
+  }
+  const res = await invoke<{ snapshots: SnapshotEntry[] }>('snapshot_list');
+  return res.snapshots ?? [];
+}
+
+export interface DriveSummary {
+  name: string;
+  format: string;
+  totalBytes: number;
+  freeBytes: number;
+}
+
+export interface SystemDiagnostics {
+  osDescription: string;
+  osVersion: string;
+  architecture: string;
+  processorCount: number;
+  totalAvailableMemoryBytes: number;
+  drives: DriveSummary[];
+  appliedActionIds: string[];
+  collectedAtUtc: string;
+}
+
+export async function collectDiagnostics(): Promise<SystemDiagnostics | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<SystemDiagnostics>('diagnostics_collect');
+}
+
+export interface PlannedOperation {
+  actionId: string;
+  moduleId: string;
+  title: string;
+  riskLevel: string;
+  reason: string;
+  alreadyApplied: boolean;
+}
+
+export interface OperationPlan {
+  profile: string;
+  totalRecommended: number;
+  operations: PlannedOperation[];
+  generatedAtUtc: string;
+}
+
+export async function generatePlan(profile: 'gaming' | 'balanced' | 'minimal'): Promise<OperationPlan | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<OperationPlan>('plan_generate', { profile });
+}
+
+export interface CleanupCandidate {
+  path: string;
+  sizeBytes: number;
+  lastWriteUtc: string;
+}
+
+export interface QuarantineBatch {
+  batchId: string;
+  createdAtUtc: string;
+  entries: Array<{ originalPath: string; quarantinedPath: string; sizeBytes: number }>;
+}
+
+export async function scanCleanup(): Promise<CleanupCandidate[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return [];
+  const res = await invoke<{ candidates: CleanupCandidate[] }>('cleanup_scan');
+  return res.candidates ?? [];
+}
+
+export async function quarantineFiles(paths: string[]): Promise<QuarantineBatch> {
+  const invoke = getTauriInvoke();
+  if (!invoke) throw new Error('Tauri runtime not available');
+  return invoke<QuarantineBatch>('cleanup_quarantine', { paths });
+}
+
+export async function restoreQuarantine(batchId: string): Promise<{ batchId: string; restored: number; total: number }> {
+  const invoke = getTauriInvoke();
+  if (!invoke) throw new Error('Tauri runtime not available');
+  return invoke<{ batchId: string; restored: number; total: number }>('cleanup_restore', { batchId });
+}
+
+export interface LabMeasurement {
+  samples: number;
+  medianMs: number;
+  minMs: number;
+  maxMs: number;
+  stdDevMs: number;
+  workingSetBytes: number;
+  measuredAtUtc: string;
+}
+
+export async function measureLab(samples = 7): Promise<LabMeasurement | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<LabMeasurement>('lab_measure', { samples });
+}
+
+export interface LedgerEntry {
+  id: string;
+  timestampUtc: string;
+  operation: string;
+  status: string;
+}
+
+export async function listLedger(): Promise<LedgerEntry[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return [];
+  const res = await invoke<{ entries: LedgerEntry[] }>('ledger_list');
+  return res.entries ?? [];
+}
+
+export async function executePlan(profile: 'gaming' | 'balanced' | 'minimal'): Promise<{ profile: string; applied: string[]; skipped: string[] } | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<{ profile: string; applied: string[]; skipped: string[] }>('plan_execute', { profile });
+}
+
+export interface DuplicateGroup {
+  sha256: string;
+  sizeBytes: number;
+  paths: string[];
+}
+
+export async function findDuplicates(): Promise<DuplicateGroup[]> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return [];
+  const res = await invoke<{ groups: DuplicateGroup[] }>('clean_duplicates');
+  return res.groups ?? [];
+}
+
+export interface StorageAnalyticsReport {
+  volumes: DriveSummary[];
+  largestTempFiles: Array<{ path: string; sizeBytes: number; lastWriteUtc: string }>;
+  analyzedAtUtc: string;
+}
+
+export async function getStorageAnalytics(): Promise<StorageAnalyticsReport | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<StorageAnalyticsReport>('storage_analytics');
+}
+
+export interface DiscoveredSource {
+  id: string;
+  name: string;
+  category: string;
+  subcategory: string;
+  path: string;
+  sourceType: string;
+  relatedComponent: string;
+  exists: boolean;
+  accessible: boolean;
+  fileCount: number | null;
+  totalBytes: number | null;
+  state: string;
+  preliminaryRisk: string;
+  inclusionReason: string;
+  restrictions: string[];
+  errors: string[];
+}
+
+export interface DiscoveryStatus {
+  runId: string | null;
+  status: string;
+  progress: number;
+  currentProvider: string | null;
+  processedSources: number;
+  totalProviders: number;
+  errors: string[];
+  cancelReason: string | null;
+  hasResult: boolean;
+}
+
+export interface DiscoveryResult {
+  runId: string;
+  status: string;
+  sources: DiscoveredSource[];
+  diagnostics: {
+    startedAtUtc: string;
+    completedAtUtc: string | null;
+    cancelled: boolean;
+    totalProviders: number;
+    failedProviders: number;
+    totalSources: number;
+    accessibleSources: number;
+    inaccessibleSources: number;
+    providerErrors: string[];
+  };
+}
+
+export async function startDiscovery(): Promise<{ runId: string; status: string } | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<{ runId: string; status: string }>('discovery_start');
+}
+
+export async function getDiscoveryStatus(): Promise<DiscoveryStatus | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<DiscoveryStatus>('discovery_status');
+}
+
+export async function cancelDiscovery(): Promise<{ cancelled: boolean } | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<{ cancelled: boolean }>('discovery_cancel');
+}
+
+export async function getDiscoveryResults(): Promise<DiscoveryResult | null> {
+  const invoke = getTauriInvoke();
+  if (!invoke) return null;
+  return invoke<DiscoveryResult>('discovery_results');
+}
